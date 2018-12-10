@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="reservation">
+        <item>무관</item>
+        <item>가능</item>
+        <item>불가능</item>
+    </string-array>
+</resources>

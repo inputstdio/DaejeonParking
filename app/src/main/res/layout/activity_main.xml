@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="184dp"
+        android:layout_marginBottom="217dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="100"
+                android:hint="@string/search_hint"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                tools:targetApi="o" />
+
+            <Button
+                android:id="@+id/btn_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="btn_click"
+                android:text="@string/search_btn" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/search_divide"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/divide"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkedButton="@id/divide_all"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/search_all" />
+
+                    <RadioButton
+                        android:id="@+id/divide_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/search_divide_public" />
+
+                    <RadioButton
+                        android:id="@+id/divide_public"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/search_divide_private" />
+
+                    <RadioButton
+                        android:id="@+id/divide_private"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/search_operateDay"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+                <!--                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/search_operateDay_week" />
+
+                                <CheckBox
+                                    android:checked="true"
+                                    android:id="@+id/operateDay_week"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="5dp" />-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/search_operateDay_sat" />
+
+                <CheckBox
+                    android:id="@+id/operateDay_sat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/search_operateDay_sun" />
+
+                <CheckBox
+                    android:id="@+id/operateDay_sun"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/search_reservation"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <Spinner
+                    android:id="@+id/reservation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/reservation" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="end|bottom"
+        android:orientation="vertical">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:visibility="invisible"
+            app:borderWidth="0dp"
+            app:elevation="10dp"
+            app:pressedTranslationZ="15dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:visibility="invisible"
+            app:borderWidth="0dp"
+            app:elevation="10dp"
+            app:pressedTranslationZ="15dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="btn_click"
+            app:borderWidth="0dp"
+            app:elevation="10dp"
+            app:pressedTranslationZ="15dp" />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">DaejeonParking</string>
+    <string name="daum_map">daum_map</string>
+    <string name="search_hint">주차장 이름을 입력 하세요</string>
+    <string name="search_btn">검색</string>
+    <string name="search_divide">주차장 구분</string>
+    <string name="search_all">전부</string>
+    <string name="search_divide_public">공영</string>
+    <string name="search_divide_private">민간</string>
+    <string name="search_operateDay">주말 운영 요일</string>
+    <string name="search_operateDay_week">평일</string>
+    <string name="search_operateDay_sat">토요일</string>
+    <string name="search_operateDay_sun">일요일</string>
+    <string name="search_reservation">예약 가능 여부</string>
+    <string name="listView_addr">주소 : </string>
+    <string name="listView_divide">구분 : </string>
+    <string name="listView_type">유형 : </string>
+    <string name="listView_parkingLot">주차구획 수 : </string>
+    <string name="btn_close">닫기</string>
+</resources>
+
