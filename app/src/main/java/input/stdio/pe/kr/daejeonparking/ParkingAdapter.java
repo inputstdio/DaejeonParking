@@ -18,8 +18,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ParkingAdapter extends ArrayAdapter<ParkingBean> {
-//    private final int color = Color.parseColor("#00574b");
-    private final int color = Color.BLACK;
+    private final int color = Color.parseColor("#00574b");
     private ArrayList<ParkingBean> items;
     private LayoutInflater inflater;
     private SpannableStringBuilder sb;
@@ -46,41 +45,17 @@ public class ParkingAdapter extends ArrayAdapter<ParkingBean> {
             parkingName.setText(item.getNAME());
 
             TextView parkingDivide = view.findViewById(R.id.parking_divide);
-            String divide = "";
-            switch (item.getDIVIDE_NUM()) {
-                case "6":
-                    divide = "공영";
-                    break;
-                case "7":
-                    divide = "민간";
-                    break;
-            }
-//            sb = new SpannableStringBuilder("구분 : ");
-//            sb.append(divide).append("\t\t");
-//            sb.setSpan(new ForegroundColorSpan(color), 0,4,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            sb.setSpan(new StyleSpan(Typeface.BOLD), 0,4,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            parkingDivide.setText(SpannableString("구분 : ", divide));
+            String[] divide = new String[8];
+            divide[6] = "공영";
+            divide[7] = "민간";
+            parkingDivide.setText(SpannableString("구분 : ", divide[Integer.parseInt(item.getDIVIDE_NUM())]));
 
             TextView parkingAddr = view.findViewById(R.id.parking_addr);
             parkingAddr.setText(SpannableString("주소 : ", item.getADDR01()));
 
-            String type = "";
-            switch (item.getTYPE_NUM()) {
-                case "1":
-                    type = "공영노상";
-                    break;
-                case "2":
-                    type = "공영노외";
-                    break;
-                case "3":
-                    type = "민간노외";
-                    break;
-                case "4":
-                    type = "부설주차장";
-                    break;
-            }
+            String[] type = {"", "공영노상", "공영노외", "민간노외", "부설주차장"};
             TextView parkingType = view.findViewById(R.id.parking_type);
-            parkingType.setText(SpannableString("유형 : ", type));
+            parkingType.setText(SpannableString("유형 : ", type[Integer.parseInt(item.getTYPE_NUM())]));
 
             TextView parkingTotalLot = view.findViewById(R.id.parking_totalLot);
             parkingTotalLot.setText(SpannableString("주차구획 수 : ", item.getTOTAL_PARKING_LOT() + "대"));
