@@ -42,8 +42,8 @@ public class SearchActivity extends AppCompatActivity {
         listView.setAdapter(parkingAdapter);
         listView.setOnItemClickListener(click_Item);
 
-/*        mapView = new MapView(this);
-        mapView.setDaumMapApiKey("801f6106ad17677e988f31d884406d79");*/
+        mapView = new MapView(this);
+        mapView.setDaumMapApiKey("801f6106ad17677e988f31d884406d79");
 
 /*        TextView textView = findViewById(R.id.text_view);
         StringBuilder sb = new StringBuilder();
@@ -56,12 +56,12 @@ public class SearchActivity extends AppCompatActivity {
         textView.setText(sb.toString());*/
     }
 
-    ListView.OnItemClickListener click_Item = new AdapterView.OnItemClickListener(){
+    ListView.OnItemClickListener click_Item = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             ParkingBean data = (ParkingBean) parent.getAdapter().getItem(position);
             LayoutInflater click_inflater = getLayoutInflater();
-            View alertLayout = click_inflater.inflate(R.layout.alert_parking_info,null);
+            View alertLayout = click_inflater.inflate(R.layout.alert_parking_info, null);
             AlertDialog.Builder alert = new AlertDialog.Builder(SearchActivity.this);
             alert
                     .setTitle("주차장 상세 정보")
@@ -72,9 +72,9 @@ public class SearchActivity extends AppCompatActivity {
 
             alert_textView = alertLayout.findViewById(R.id.text_view);
             alert_textView.setText(data.getAllString());
-/*            ViewGroup mapViewContainer = alertLayout.findViewById(R.id.map_view);
+            ViewGroup mapViewContainer = alertLayout.findViewById(R.id.map_view);
             MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(Double.parseDouble(data.getLAT()), Double.parseDouble(data.getLON()));
-            mapView.setMapCenterPoint(mapPoint, false);
+            mapView.setMapCenterPoint(mapPoint, true);
             mapViewContainer.addView(mapView);
 
             MapPOIItem marker = new MapPOIItem();
@@ -85,7 +85,7 @@ public class SearchActivity extends AppCompatActivity {
             marker.setMarkerType(MapPOIItem.MarkerType.BluePin);
             // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
             marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
-            mapView.addPOIItem(marker);*/
+            mapView.addPOIItem(marker);
         }
     };
 
@@ -124,7 +124,11 @@ public class SearchActivity extends AppCompatActivity {
         db.close();
     }
 
-    public void alert_btn_click(View view){
-
+    public void alert_btn_click(View view) {
+        switch (view.getId()) {
+            case R.id.btn_close:
+                alertDialog.dismiss();
+                break;
+        }
     }
 }

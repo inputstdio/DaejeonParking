@@ -7,23 +7,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="8"
         android:orientation="vertical">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <TextView
                 android:id="@+id/text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </ScrollView>
     </LinearLayout>
+
     <RelativeLayout
-        android:layout_weight="5"
         android:id="@+id/map_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="220dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,12 +35,12 @@
         android:layout_weight="1">
 
         <Button
-            android:onClick="alert_btn_click"
             android:id="@+id/btn_close"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:onClick="alert_btn_click"
             android:text="@string/btn_close" />
     </LinearLayout>
 </LinearLayout>

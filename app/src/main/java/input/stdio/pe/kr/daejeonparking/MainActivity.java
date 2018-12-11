@@ -48,12 +48,10 @@ public class MainActivity extends AppCompatActivity {
         Boolean bFirst = mPref.getBoolean("isFirst", false);
         if (!bFirst) {
             Log.d("version", "first");
+            SharedPreferences.Editor editor = mPref.edit();
+            editor.putBoolean("isFirst", true);
+            editor.apply();
             makeDB();
-            if (!parkingBeans.isEmpty()){
-                SharedPreferences.Editor editor = mPref.edit();
-                editor.putBoolean("isFirst", true);
-                editor.apply();
-            }
         }
         if (bFirst) {
             Log.d("version", "not first");

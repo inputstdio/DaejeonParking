@@ -180,7 +180,7 @@
             android:backgroundTint="@color/colorPrimary"
             android:visibility="invisible"
             app:borderWidth="0dp"
-            app:elevation="10dp"
+            app:elevation="5dp"
             app:pressedTranslationZ="15dp" />
 
         <android.support.design.widget.FloatingActionButton
@@ -190,7 +190,7 @@
             android:backgroundTint="@color/colorPrimary"
             android:visibility="invisible"
             app:borderWidth="0dp"
-            app:elevation="10dp"
+            app:elevation="5dp"
             app:pressedTranslationZ="15dp" />
 
         <android.support.design.widget.FloatingActionButton
@@ -202,7 +202,7 @@
             android:focusable="true"
             android:onClick="btn_click"
             app:borderWidth="0dp"
-            app:elevation="10dp"
+            app:elevation="5dp"
             app:pressedTranslationZ="15dp" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
