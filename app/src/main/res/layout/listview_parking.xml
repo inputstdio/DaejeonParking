@@ -6,6 +6,7 @@
     android:layout_height="?android:attr/listPreferredItemHeight">
 
     <LinearLayout
+        android:weightSum="10"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:layout_width="match_parent"
@@ -13,55 +14,61 @@
         android:orientation="horizontal">
 
         <TextView
+            android:layout_weight="6"
             android:layout_gravity="center"
             android:text="주차장 이름"
             android:id="@+id/parking_name"
-            android:layout_width="250dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="17sp" />
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
+            android:gravity="end"
+            android:layout_weight="4"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp">
-
-            <TextView
-                android:text="주소"
-                android:id="@+id/parking_addr"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/black" />
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="주소"
+                    android:id="@+id/parking_addr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/black" />
 
-            <TextView
-                android:text="운영시간"
-                android:id="@+id/parking_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAlignment="textEnd"
-                android:textColor="@color/black" />
+                <TextView
+                    android:text="운영시간"
+                    android:id="@+id/parking_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/black" />
 
-            <TextView
-                android:text="주차대수"
-                android:id="@+id/parking_totalLot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAlignment="textEnd"
-                android:textColor="@color/black" />
+                <TextView
+                    android:text="주차대수"
+                    android:id="@+id/parking_totalLot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/black" />
 
-            <TextView
-                android:text="구분"
-                android:id="@+id/parking_divide"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/black" />
+                <TextView
+                    android:text="구분"
+                    android:id="@+id/parking_divide"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/black" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

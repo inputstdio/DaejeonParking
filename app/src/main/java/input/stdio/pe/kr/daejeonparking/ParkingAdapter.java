@@ -9,6 +9,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,9 @@ public class ParkingAdapter extends ArrayAdapter<ParkingBean> {
         if (item != null) {
             TextView parkingName = view.findViewById(R.id.parking_name);
             parkingName.setTypeface(Typeface.DEFAULT_BOLD);
-            parkingName.setText(item.getNAME());
+
+            String name = item.getNAME();
+            parkingName.setText(newName(item.getNAME()));
 
             TextView parkingDivide = view.findViewById(R.id.parking_divide);
             String[] divide = new String[8];
@@ -70,5 +73,26 @@ public class ParkingAdapter extends ArrayAdapter<ParkingBean> {
         sb.setSpan(new ForegroundColorSpan(color), 0,length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         sb.setSpan(new StyleSpan(Typeface.BOLD), 0,length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return sb;
+    }
+    private String newName (String name) {
+        String newName = "";
+        String[] names = name.split("\\s");
+        StringBuilder sb_name = new StringBuilder();
+        int name_length = names.length;
+        if (name.length() >= 10) {
+            if (name_length == 1) {
+                sb_name.append(name.substring(0, name.length()-5));
+                sb_name.append("\n").append(name.substring(name.length()-5, name.length()));
+            } else {
+                for (int i=0; i<name_length-1; i++) {
+                    sb_name.append(names[i]);
+                }
+                sb_name.append("\n").append(newName(names[name_length-1]));
+            }
+            newName = sb_name.toString();
+        } else {
+            newName = name;
+        }
+        return newName;
     }
 }

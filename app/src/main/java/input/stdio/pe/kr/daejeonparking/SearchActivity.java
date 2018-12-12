@@ -68,7 +68,7 @@ public class SearchActivity extends AppCompatActivity {
             View alertLayout = click_inflater.inflate(R.layout.alert_parking_info, null);
             AlertDialog.Builder alert = new AlertDialog.Builder(SearchActivity.this, R.style.CustomAlertDialog_Rounded);
             alert
-                    .setTitle(Html.fromHtml("<font color='#00574b'><b>주차장 상세 정보</b></font>"))
+                    .setTitle(Html.fromHtml("<font color='#00574b'><big><b>주차장 상세 정보</b></big></font>"))
                     .setView(alertLayout)
                     .setCancelable(false);
             alertDialog = alert.create();
@@ -93,7 +93,7 @@ public class SearchActivity extends AppCompatActivity {
             customMarker.setMarkerType(MapPOIItem.MarkerType.CustomImage); // 마커타입을 커스텀 마커로 지정.
             customMarker.setCustomImageResourceId(R.drawable.custom_marker); // 마커 이미지.
             customMarker.setCustomSelectedImageResourceId(R.drawable.custom_marker_selected); // 선택 마커 이미지.
-            customMarker.setCustomImageAutoscale(false); // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
+            customMarker.setCustomImageAutoscale(true); // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
             customMarker.setCustomImageAnchor(0.5f, 1.0f); // 마커 이미지중 기준이 되는 위치(앵커포인트) 지정 - 마커 이미지 좌측 상단 기준 x(0.0f ~ 1.0f), y(0.0f ~ 1.0f) 값.
 
             mapView.addPOIItem(customMarker);
@@ -114,7 +114,7 @@ public class SearchActivity extends AppCompatActivity {
         public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
             // 다음 지도(카카오맵) 로 연결
             new AlertDialog.Builder(SearchActivity.this, R.style.CustomAlertDialog_TextColor)
-                    .setIcon(R.drawable.kakaomap_icon) // 카카오 맵 아이콘 넣을 예정
+                    .setIcon(R.drawable.kakaomap_icon)
                     .setTitle("카카오 맵으로 이동 합니다.")
                     .setNegativeButton("예", new DialogInterface.OnClickListener() {
                         @Override

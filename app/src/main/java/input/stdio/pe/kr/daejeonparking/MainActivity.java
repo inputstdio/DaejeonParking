@@ -1,11 +1,15 @@
 package input.stdio.pe.kr.daejeonparking;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -32,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<ParkingBean> parkingBeans = new ArrayList<>();
     private ParkingBean parkingBean = new ParkingBean();
-    private FloatingActionButton floatingActionButton_1, floatingActionButton_2;
+    private FloatingActionButton floatingActionButton_info, floatingActionButton_config;
     private EditText editText;
     private RadioButton divide_all, divide_private, divide_public;
     private CheckBox sat_checkBox, sun_checkBox, week_checkBox;
@@ -57,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
         }
         floating_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.floating_open);
         floating_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.floating_close);
-        floatingActionButton_1 = findViewById(R.id.floatingActionButton_1);
-        floatingActionButton_2 = findViewById(R.id.floatingActionButton_2);
+        floatingActionButton_info = findViewById(R.id.floatingActionButton_info);
+        floatingActionButton_config = findViewById(R.id.floatingActionButton_config);
         editText = findViewById(R.id.editText);
         divide_all = findViewById(R.id.divide_all);
         divide_private = findViewById(R.id.divide_private);
@@ -71,6 +75,20 @@ public class MainActivity extends AppCompatActivity {
 
     public void btn_click(View view) {
         switch (view.getId()) {
+            case R.id.floatingActionButton_info:
+                new AlertDialog.Builder(this, R.style.CustomAlertDialog_TextColor)
+                        .setTitle(Html.fromHtml("<font color='#00574b'><big><b>정보</b></big></font>"))
+                        .setIcon(R.drawable.info_icon2)
+                        .setMessage("· 제작 : 이성우\n· 사용된 API\n\t다음 지도 API (다음카카오 제공)\n\t대전시 주차장정보 제공 API (도로정책과 제공)")
+                        .setPositiveButton(Html.fromHtml("<b>확인</b>"), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        })
+                        .setCancelable(false)
+                        .create()
+                        .show();
+                break;
             case R.id.floatingActionButton:
                 floating_anim();
                 break;
@@ -120,16 +138,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void floating_anim() {
         if (isFloatingOpen) {
-            floatingActionButton_1.startAnimation(floating_close);
-            floatingActionButton_2.startAnimation(floating_close);
-            floatingActionButton_1.setClickable(false);
-            floatingActionButton_2.setClickable(false);
+            floatingActionButton_info.startAnimation(floating_close);
+            floatingActionButton_config.startAnimation(floating_close);
+            floatingActionButton_info.setClickable(false);
+            floatingActionButton_config.setClickable(false);
             isFloatingOpen = false;
         } else {
-            floatingActionButton_1.startAnimation(floating_open);
-            floatingActionButton_2.startAnimation(floating_open);
-            floatingActionButton_1.setClickable(true);
-            floatingActionButton_2.setClickable(true);
+            floatingActionButton_info.startAnimation(floating_open);
+            floatingActionButton_config.startAnimation(floating_open);
+            floatingActionButton_info.setClickable(true);
+            floatingActionButton_config.setClickable(true);
             isFloatingOpen = true;
         }
     }
