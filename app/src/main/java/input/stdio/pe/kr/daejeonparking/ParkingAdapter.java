@@ -48,14 +48,11 @@ public class ParkingAdapter extends ArrayAdapter<ParkingBean> {
             String[] divide = new String[8];
             divide[6] = "공영";
             divide[7] = "민간";
-            parkingDivide.setText(SpannableString("구분 : ", divide[Integer.parseInt(item.getDIVIDE_NUM())]));
+            String[] type = {"", "공영노상", "공영노외", "민간노외", "부설주차장"};
+            parkingDivide.setText(new SpannableStringBuilder(SpannableString("구분 : ", divide[Integer.parseInt(item.getDIVIDE_NUM())])).append(SpannableString("유형 : ", type[Integer.parseInt(item.getTYPE_NUM())])));
 
             TextView parkingAddr = view.findViewById(R.id.parking_addr);
             parkingAddr.setText(SpannableString("주소 : ", item.getADDR01()));
-
-            String[] type = {"", "공영노상", "공영노외", "민간노외", "부설주차장"};
-            TextView parkingType = view.findViewById(R.id.parking_type);
-            parkingType.setText(SpannableString("유형 : ", type[Integer.parseInt(item.getTYPE_NUM())]));
 
             TextView parkingTotalLot = view.findViewById(R.id.parking_totalLot);
             parkingTotalLot.setText(SpannableString("주차구획 수 : ", item.getTOTAL_PARKING_LOT() + "대"));

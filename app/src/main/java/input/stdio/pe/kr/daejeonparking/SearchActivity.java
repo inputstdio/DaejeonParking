@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -84,19 +82,22 @@ public class SearchActivity extends AppCompatActivity {
             MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(Double.parseDouble(data.getLAT()), Double.parseDouble(data.getLON()));
             mapView.setMapCenterPoint(mapPoint, true);
             mapViewContainer.addView(mapView);
-//            mapView.setCalloutBalloonAdapter(new CumstomCalloutBalloonAdaper());
+//            mapView.setCalloutBalloonAdapter(new CumstomCalloutBalloonAdaper());  // 커스텀 풍선
             mapView.setPOIItemEventListener(poiItemEventListener);
 
-            MapPOIItem marker = new MapPOIItem();
-            marker.setItemName(data.getNAME());
-            marker.setTag(0);
-            marker.setMapPoint(mapPoint);
-            // 기본으로 제공하는 BluePin 마커 모양.
-            marker.setMarkerType(MapPOIItem.MarkerType.BluePin);
-            // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
-            marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
-            marker.setCustomImageAutoscale(false);
-            mapView.addPOIItem(marker);
+            // 커스텀 마커
+            MapPOIItem customMarker = new MapPOIItem();
+            customMarker.setItemName(data.getNAME());
+            customMarker.setTag(1);
+            customMarker.setMapPoint(mapPoint);
+            customMarker.setMarkerType(MapPOIItem.MarkerType.CustomImage); // 마커타입을 커스텀 마커로 지정.
+            customMarker.setCustomImageResourceId(R.drawable.custom_marker); // 마커 이미지.
+            customMarker.setCustomSelectedImageResourceId(R.drawable.custom_marker_selected); // 선택 마커 이미지.
+            customMarker.setCustomImageAutoscale(false); // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
+            customMarker.setCustomImageAnchor(0.5f, 1.0f); // 마커 이미지중 기준이 되는 위치(앵커포인트) 지정 - 마커 이미지 좌측 상단 기준 x(0.0f ~ 1.0f), y(0.0f ~ 1.0f) 값.
+
+            mapView.addPOIItem(customMarker);
+
             MapReverseGeoCoder reverseGeoCoder = new MapReverseGeoCoder("801f6106ad17677e988f31d884406d79", mapPoint, reverseGeoCodingResultListener, SearchActivity.this);
             reverseGeoCoder.startFindingAddress();
         }
@@ -253,7 +254,7 @@ public class SearchActivity extends AppCompatActivity {
         }
         sb.append(SpannableString("주차 예약 서비스 시행 여부 : ", reser_code)).append("\n");
         if (!data.getADDITIONAL().equals("NONE")) {
-            sb.append(SpannableString("특이사항 : ", data.getADDITIONAL()));
+            sb.append(SpannableString("특이사항 : ", data.getADDITIONAL().replaceAll("※", "")));
         }
         return sb;
     }
@@ -271,6 +272,14 @@ public class SearchActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.btn_close:
                 alertDialog.dismiss();
+                break;
+        }
+    }
+
+    public void btn_click(View view){
+        switch (view.getId()){
+            case R.id.btn_back:
+                finish();
                 break;
         }
     }

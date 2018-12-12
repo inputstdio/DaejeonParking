@@ -17,5 +17,6 @@
     <string name="listView_type">유형 : </string>
     <string name="listView_parkingLot">주차구획 수 : </string>
     <string name="btn_close">닫기</string>
+    <string name="btn_back">검색 화면으로 돌아가기</string>
 </resources>
 

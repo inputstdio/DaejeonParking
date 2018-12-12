@@ -5,9 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SearchActivity">
-    <ListView
-        android:id="@+id/listView"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp" />
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button"
+            android:onClick="btn_click"
+            android:textSize="15sp"
+            android:text="@string/btn_back"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
+            android:divider="@drawable/listview_divider" />
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
