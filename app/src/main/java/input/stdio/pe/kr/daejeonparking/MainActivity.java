@@ -23,7 +23,9 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private final String KEY = "VpuAGnc2dBK0xVvnLMlSYcKGA6DMNXXLySYFNuRvmeQXeZKlj7IfmCOjA2%2Fgez3z6gHlAKonJ0mrSV2A%2Bwnlkg%3D%3D";
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioButton divide_all, divide_private, divide_public;
     private CheckBox sat_checkBox, sun_checkBox, week_checkBox;
     private Spinner reser_spinner;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("version", "first");
             SharedPreferences.Editor editor = mPref.edit();
             editor.putBoolean("isFirst", true);
+            editor.putString("lastUpdate",dateFormat.format(new Date(System.currentTimeMillis())));
             editor.apply();
             makeDB();
         }
@@ -69,12 +73,32 @@ public class MainActivity extends AppCompatActivity {
         divide_public = findViewById(R.id.divide_public);
         sat_checkBox = findViewById(R.id.operateDay_sat);
         sun_checkBox = findViewById(R.id.operateDay_sun);
-        //week_checkBox = findViewById(R.id.operateDay_week);
         reser_spinner = findViewById(R.id.reservation);
     }
 
     public void btn_click(View view) {
         switch (view.getId()) {
+            case R.id.floatingActionButton_config:
+                SharedPreferences pref = getSharedPreferences("isFirst", MODE_PRIVATE);
+                new AlertDialog.Builder(this, R.style.CustomAlertDialog_TextColor)
+                        .setTitle(Html.fromHtml("<font color='#00574b'><big><b>DB Update?</b></big></font>"))
+                        .setIcon(R.drawable.info_icon2)
+                        .setMessage("Last DB Update : " + pref.getString("lastUpdate", ""))
+                        .setNegativeButton(Html.fromHtml("<b>확인</b>"), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                updateDB();
+                            }
+                        })
+                        .setPositiveButton(Html.fromHtml("<b>취소</b>"), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        })
+                        .setCancelable(false)
+                        .create()
+                        .show();
+                break;
             case R.id.floatingActionButton_info:
                 new AlertDialog.Builder(this, R.style.CustomAlertDialog_TextColor)
                         .setTitle(Html.fromHtml("<font color='#00574b'><big><b>정보</b></big></font>"))
@@ -128,8 +152,6 @@ public class MainActivity extends AppCompatActivity {
                         sql.append(" AND RESERVATION_CODE = 'N'");
                         break;
                 }
-
-//                Log.d("query test", sql.toString());
                 intent_search.putExtra("query", sql.toString());
                 startActivity(intent_search);
                 break;
@@ -332,7 +354,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makeDB() {
-//        Log.d("Log", "makeDB");
         new Thread() {
             public void run() {
                 try {
@@ -342,13 +363,42 @@ public class MainActivity extends AppCompatActivity {
                     }
                     for (ParkingBean data : parkingBeans) {
                         insertDB(data);
-//                        Log.d("Log", "InsertDB : " + data.getNAME());
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }.start();
+    }
+
+    private void updateDB() {
+        new Thread() {
+            public void run() {
+                try {
+                    getParkingAPI();
+                    if (parkingBeans.isEmpty()){
+                        Log.d("Log","API ERROR");
+                    }
+                    resetDB();
+                    for (ParkingBean data : parkingBeans) {
+                        insertDB(data);
+                    }
+                    SharedPreferences mPref = getSharedPreferences("isFirst", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = mPref.edit();
+                    editor.putBoolean("isFirst", true);
+                    editor.putString("lastUpdate",dateFormat.format(new Date(System.currentTimeMillis())));
+                    editor.apply();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+    private void resetDB(){
+        SQLiteDAO sql_obj = new SQLiteDAO(this);
+        SQLiteDatabase db = sql_obj.getWritableDatabase();
+        db.execSQL("DELETE FROM parking");
+        db.close();
     }
 
     private void insertDB(ParkingBean data) {

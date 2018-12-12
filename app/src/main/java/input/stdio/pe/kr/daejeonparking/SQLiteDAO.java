@@ -31,11 +31,8 @@ public class SQLiteDAO extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-//        db.execSQL("DROP TABLE IF EXISTS cpparking");
-//        db.execSQL("CREATE TABLE cpparking AS SELECT * FROM parking");
         db.execSQL("DROP TABLE IF EXISTS parking");
         onCreate(db);
-//        rewriteCopy(db);
     }
 
     private void rewriteCopy(SQLiteDatabase db){
