@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.MapPOIItem;
@@ -35,9 +36,6 @@ public class SearchActivity extends AppCompatActivity {
     private ParkingBean parkingBean;
     private AlertDialog alertDialog;
     private ArrayList<ParkingBean> parkingBeans;
-    private ParkingAdapter parkingAdapter;
-    private TextView alert_textView;
-    private MapView mapView;
     private ParkingBean data;
     private String newAddress;
     private final int color = Color.parseColor("#00574b");
@@ -48,7 +46,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         parkingBeans = new ArrayList<>();
-        parkingAdapter = new ParkingAdapter(this, R.layout.listview_parking, parkingBeans);
+        ParkingAdapter parkingAdapter = new ParkingAdapter(this, R.layout.listview_parking, parkingBeans);
 
         Intent get_intent = getIntent();
         selectDB(get_intent.getStringExtra("query"));
@@ -56,12 +54,21 @@ public class SearchActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.listView);
         listView.setAdapter(parkingAdapter);
         listView.setOnItemClickListener(click_Item);
+
+        TextView textView = findViewById(R.id.text_view);
+
+        if (parkingBean == null){
+//            Toast.makeText(this,"검색 결과가 없습니다.", Toast.LENGTH_LONG).show();
+            textView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+            textView.setText("검색 결과가 없습니다.");
+        }
     }
 
     ListView.OnItemClickListener click_Item = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            mapView = new MapView(SearchActivity.this);
+            MapView mapView = new MapView(SearchActivity.this);
             mapView.setDaumMapApiKey("801f6106ad17677e988f31d884406d79");
             data = (ParkingBean) parent.getAdapter().getItem(position);
             LayoutInflater click_inflater = getLayoutInflater();
@@ -74,7 +81,7 @@ public class SearchActivity extends AppCompatActivity {
             alertDialog = alert.create();
             alertDialog.show();
 
-            alert_textView = alertLayout.findViewById(R.id.text_view);
+            TextView alert_textView = alertLayout.findViewById(R.id.text_view);
 //            alert_textView.setText(data.getAllString());
             alert_textView.setText(show_info());
 
@@ -113,7 +120,7 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
             // 다음 지도(카카오맵) 로 연결
-            new AlertDialog.Builder(SearchActivity.this, R.style.CustomAlertDialog_TextColor)
+            new AlertDialog.Builder(SearchActivity.this)
                     .setIcon(R.drawable.kakaomap_icon)
                     .setTitle("카카오 맵으로 이동 합니다.")
                     .setNegativeButton("예", new DialogInterface.OnClickListener() {

@@ -80,10 +80,10 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.floatingActionButton_config:
                 SharedPreferences pref = getSharedPreferences("isFirst", MODE_PRIVATE);
-                new AlertDialog.Builder(this, R.style.CustomAlertDialog_TextColor)
+                new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded)
                         .setTitle(Html.fromHtml("<font color='#00574b'><big><b>DB Update?</b></big></font>"))
                         .setIcon(R.drawable.info_icon2)
-                        .setMessage("Last DB Update : " + pref.getString("lastUpdate", ""))
+                        .setMessage("Last DB Update : " + pref.getString("lastUpdate", "알수없음"))
                         .setNegativeButton(Html.fromHtml("<b>확인</b>"), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -100,10 +100,10 @@ public class MainActivity extends AppCompatActivity {
                         .show();
                 break;
             case R.id.floatingActionButton_info:
-                new AlertDialog.Builder(this, R.style.CustomAlertDialog_TextColor)
+                new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded)
                         .setTitle(Html.fromHtml("<font color='#00574b'><big><b>정보</b></big></font>"))
                         .setIcon(R.drawable.info_icon2)
-                        .setMessage("· 제작 : 이성우\n· 사용된 API\n\t다음 지도 API (다음카카오 제공)\n\t대전시 주차장정보 제공 API (도로정책과 제공)")
+                        .setMessage("· 제작 : 이성우\n· 사용된 API\n\t다음 지도 API\n\t대전시 주차장정보 제공 API")
                         .setPositiveButton(Html.fromHtml("<b>확인</b>"), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

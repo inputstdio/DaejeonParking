@@ -17,10 +17,20 @@
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_button"
             android:onClick="btn_click"
-            android:textSize="17sp"
             android:text="@string/btn_back"
             android:textColor="@color/white"
+            android:textSize="17sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <ListView
             android:id="@+id/listView"
