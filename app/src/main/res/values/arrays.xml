@@ -5,4 +5,12 @@
         <item>가능</item>
         <item>불가능</item>
     </string-array>
+    <string-array name="location">
+        <item>대전 전체</item>
+        <item>대덕구</item>
+        <item>유성구</item>
+        <item>동구</item>
+        <item>중구</item>
+        <item>서구</item>
+    </string-array>
 </resources>

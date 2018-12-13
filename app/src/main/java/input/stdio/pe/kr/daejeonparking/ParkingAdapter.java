@@ -53,8 +53,8 @@ public class ParkingAdapter extends ArrayAdapter<ParkingBean> {
             parkingDivide.setText(new SpannableStringBuilder(SpannableString("구분 : ", divide[Integer.parseInt(item.getDIVIDE_NUM())])).append(SpannableString("유형 : ", type[Integer.parseInt(item.getTYPE_NUM())])));
 
             String addr = item.getADDR01();
-            if(addr.length() > 12){
-                addr = addr.substring(0,12) + "...";
+            if(addr.length() > 11){
+                addr = addr.substring(0,11) + "...";
             }
             TextView parkingAddr = view.findViewById(R.id.parking_addr);
             parkingAddr.setText(SpannableString("주소 : ", addr));

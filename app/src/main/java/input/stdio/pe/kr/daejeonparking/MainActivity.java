@@ -36,6 +36,12 @@ public class MainActivity extends AppCompatActivity {
     private final String KEY = "VpuAGnc2dBK0xVvnLMlSYcKGA6DMNXXLySYFNuRvmeQXeZKlj7IfmCOjA2%2Fgez3z6gHlAKonJ0mrSV2A%2Bwnlkg%3D%3D";
     private final String ROWS = "500";
     private final String PAGE = "1";
+    private final String[] daedeokgu = {"오정동", "대화동", "회덕동", "비래동", "송촌동", "중리동", "신탄진동", "석봉동", "덕암동", "목상동", "법동", "법1동", "법2동"};
+    private final String[] donggu = {"중앙동", "효동", "신인동", "판암동", "판암1동", "판암2동", "용운동", "대동", "자양동", "가양동", "가양1동", "가양2동", "용전동", "성남동", "홍도동", "삼성동", "대청동", "산내동"};
+    private final String[] seogu = {"복수동", "도마동", "도마1동", "도마2동", "정림동", "변동", "용문동", "탄방동", "괴정동", "가장동", "내동", "갈마동", "갈마1동", "갈마2동", "월평동", "월평1동", "월평2동", "월평3동", "가수원동", "관저동", "관저1동", "관저2동", "기성동", "둔산동", "둔산1동", "둔산2동", "둔산3동", "만년동"};
+    private final String[] yuseonggu = {"진잠동", "원신흥동", "온천동", "온천1동", "온천2동", "노은동", "노은1동", "노은2동", "노은3동", "신성동", "전민동", "관평동", "구즉동"};
+    private final String[] junggu = {"은행동", "선화동", "목동", "중촌동", "대흥동", "문창동", "석교동", "대사동", "부사동", "용두동", "오류동", "태평동", "태평1동", "태평2동", "유천동", "유천1동", "유천2동", "문화동", "문화1동", "문화2동", "산성동"};
+
     private boolean parserSearch[] = new boolean[22];
     private Animation floating_open, floating_close;
     private Boolean isFloatingOpen = false;
@@ -46,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText editText;
     private RadioButton divide_private, divide_public;
     private CheckBox sat_checkBox, sun_checkBox;
-    private Spinner reser_spinner;
+    private Spinner reser_spinner, loca_spinner;
     @SuppressLint("SimpleDateFormat")
     private String timeStamp = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date());
     private AlertDialog alertDialog;
@@ -89,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         sat_checkBox = findViewById(R.id.operateDay_sat);
         sun_checkBox = findViewById(R.id.operateDay_sun);
         reser_spinner = findViewById(R.id.reservation);
+        loca_spinner = findViewById(R.id.location);
     }
 
     public void alert_btn_click(View view) {
@@ -159,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 StringBuilder sql = new StringBuilder();
                 sql.append("SELECT * FROM parking WHERE NAME LIKE '%");
 
+                /* 주차장 이름 에서 or 혹은 and 옵션 검색 및 공백 확인 */
                 String searchStr = editText.getText().toString().toLowerCase();
                 searchStr = searchStr.replaceAll("or", "|");
                 searchStr = searchStr.replaceAll("and", "&");
@@ -166,26 +174,30 @@ public class MainActivity extends AppCompatActivity {
                 StringBuilder newSearchStr = new StringBuilder();
                 while (strToken.hasMoreTokens()) {
                     String token = strToken.nextToken();
-                    if (token.equals("&")) {
-                        newSearchStr.append(" AND NAME LIKE '%");
-                    } else if (token.equals("|")) {
-                        newSearchStr.append(" OR NAME LIKE '%");
-                    } else {
-                        newSearchStr.append(token.trim()).append("%'");
+                    switch (token) {
+                        case "&":
+                            newSearchStr.append(" AND NAME LIKE '%");
+                            break;
+                        case "|":
+                            newSearchStr.append(" OR NAME LIKE '%");
+                            break;
+                        default:
+                            newSearchStr.append(token.trim()).append("%'");
+                            break;
                     }
                 }
-
                 if (!editText.getText().toString().equals("")) {
                     sql.append(newSearchStr.toString());
                 } else {
                     sql.append("'");
                 }
+                /* 구분 확인 */
                 if (divide_private.isChecked()) {
                     sql.append(" AND DIVIDE_NUM = '7'");
                 } else if (divide_public.isChecked()) {
                     sql.append(" AND DIVIDE_NUM = '6'");
                 }
-
+                /* 운영 요일 확인 */
                 if (sat_checkBox.isChecked() && sun_checkBox.isChecked()) {
                     sql.append(" AND OPERATEDAY_CODE = 'Sat,Sun'");
                 } else if (sat_checkBox.isChecked()) {
@@ -195,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     sql.append(" AND OPERATEDAY_CODE = 'NONE'");
                 }
-
+                /* 예약 여부 확인 */
                 switch (reser_spinner.getSelectedItem().toString()) {
                     case "가능":
                         sql.append(" AND RESERVATION_CODE = 'Y'");
@@ -204,7 +216,51 @@ public class MainActivity extends AppCompatActivity {
                         sql.append(" AND RESERVATION_CODE = 'N'");
                         break;
                 }
+                /* 검색 지역 확인 */
+                switch (loca_spinner.getSelectedItem().toString()){
+                    case "대덕구":
+                        sql.append(" AND (");
+                        sql.append("ADDR01 LIKE '%").append(daedeokgu[0]).append("%'");
+                        for(int i=1; i<daedeokgu.length; i++){
+                            sql.append(" OR ADDR01 LIKE '%").append(daedeokgu[i]).append("%'");
+                        }
+                        sql.append(")");
+                        break;
+                    case "중구":
+                        sql.append(" AND (");
+                        sql.append("ADDR01 LIKE '%").append(junggu[0]).append("%'");
+                        for(int i=1; i<junggu.length; i++){
+                            sql.append(" OR ADDR01 LIKE '%").append(junggu[i]).append("%'");
+                        }
+                        sql.append(")");
+                        break;
+                    case "유성구":
+                        sql.append(" AND (");
+                        sql.append("ADDR01 LIKE '%").append(yuseonggu[0]).append("%'");
+                        for(int i=1; i<yuseonggu.length; i++){
+                            sql.append(" OR ADDR01 LIKE '%").append(yuseonggu[i]).append("%'");
+                        }
+                        sql.append(")");
+                        break;
+                    case "동구":
+                        sql.append(" AND (");
+                        sql.append("ADDR01 LIKE '%").append(donggu[0]).append("%'");
+                        for(int i=1; i<donggu.length; i++){
+                            sql.append(" OR ADDR01 LIKE '%").append(donggu[i]).append("%'");
+                        }
+                        sql.append(")");
+                        break;
+                    case "서구":
+                        sql.append(" AND (");
+                        sql.append("ADDR01 LIKE '%").append(seogu[0]).append("%'");
+                        for(int i=1; i<seogu.length; i++){
+                            sql.append(" OR ADDR01 LIKE '%").append(seogu[i]).append("%'");
+                        }
+                        sql.append(")");
+                        break;
+                }
                 intent_search.putExtra("query", sql.toString());
+                Log.d("Log", "SQL : " + sql.toString());
                 startActivity(intent_search);
                 break;
         }
