@@ -22,6 +22,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="100"
+                android:fontFamily="@font/my_font_family"
                 android:hint="@string/search_hint"
                 android:importantForAutofill="no"
                 android:inputType="text"
@@ -33,9 +34,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button2"
+                android:fontFamily="@font/my_font_family"
                 android:onClick="btn_click"
                 android:text="@string/search_btn"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -53,6 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/my_font_family"
                     android:text="@string/search_divide"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="17sp"
@@ -68,8 +72,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/search_all"
-                        android:textColor="@color/black" />
+                        android:fontFamily="@font/my_font_family"
+                        android:text="@string/search_all" />
 
                     <RadioButton
                         android:id="@+id/divide_all"
@@ -80,8 +84,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/search_divide_public"
-                        android:textColor="@color/black" />
+                        android:fontFamily="@font/my_font_family"
+                        android:text="@string/search_divide_public" />
 
                     <RadioButton
                         android:id="@+id/divide_public"
@@ -92,8 +96,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/search_divide_private"
-                        android:textColor="@color/black" />
+                        android:fontFamily="@font/my_font_family"
+                        android:text="@string/search_divide_private"/>
 
                     <RadioButton
                         android:id="@+id/divide_private"
@@ -112,15 +116,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/my_font_family"
                     android:text="@string/search_operateDay"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="17sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/search_operateDay_sat"
-                    android:textColor="@color/black" />
+                    android:fontFamily="@font/my_font_family"
+                    android:text="@string/search_operateDay_sat" />
 
                 <CheckBox
                     android:id="@+id/operateDay_sat"
@@ -131,8 +137,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/search_operateDay_sun"
-                    android:textColor="@color/black" />
+                    android:fontFamily="@font/my_font_family"
+                    android:text="@string/search_operateDay_sun" />
 
                 <CheckBox
                     android:id="@+id/operateDay_sun"
@@ -142,15 +148,16 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_marginTop="3dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/my_font_family"
                     android:text="@string/search_reservation"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="17sp"
@@ -160,19 +167,21 @@
                     android:id="@+id/reservation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:entries="@array/reservation" />
+                    android:entries="@array/reservation"
+                    android:fontFamily="@font/my_font_family" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/my_font_family"
                     android:text="@string/location"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="17sp"
@@ -182,7 +191,8 @@
                     android:id="@+id/location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:entries="@array/location" />
+                    android:entries="@array/location"
+                    android:fontFamily="@font/my_font_family" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

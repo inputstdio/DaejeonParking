@@ -235,7 +235,7 @@ public class SearchActivity extends AppCompatActivity {
         String[] type = {"", "공영노상", "공영노외", "민간노외", "부설주차장"};
 
         sb.append(SpannableString("구분 : ", divide[Integer.parseInt(data.getDIVIDE_NUM())])).append("\t");
-        sb.append(SpannableString("유형 : ", type[Integer.parseInt(data.getTYPE_NUM())])).append("\t");
+        sb.append(SpannableString("유형 : ", type[Integer.parseInt(data.getTYPE_NUM())])).append("\n");
         sb.append(SpannableString("주차구획 수 : ", data.getTOTAL_PARKING_LOT() + "대")).append("\n");
         sb.append(SpannableString("운영시간 : ", String.format("%s ~ %s", data.getWEEKDAY_OPEN_TIME(), data.getWEEKDAY_CLOSE_TIME())));
         if (data.getFREECHARGE_BASETIME().equals("0")) {

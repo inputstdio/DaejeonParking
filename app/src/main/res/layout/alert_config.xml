@@ -9,21 +9,12 @@
         android:layout_height="wrap_content"
         android:gravity="center">
 
-        <TextView
-            android:id="@+id/text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:text="@string/textView_config"
-            android:textAlignment="textStart"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
-
         <Button
             android:id="@+id/btn_update"
-            android:layout_width="wrap_content"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_button2"
+            android:fontFamily="@font/my_font_family"
             android:onClick="alert_btn_click"
             android:text="@string/btn_update"
             android:textColor="@color/white" />
@@ -31,11 +22,12 @@
 
     <Button
         android:id="@+id/btn_close"
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:background="@drawable/rounded_button2"
+        android:fontFamily="@font/my_font_family"
         android:onClick="alert_btn_click"
         android:text="@string/btn_close"
         android:textColor="@color/white"
