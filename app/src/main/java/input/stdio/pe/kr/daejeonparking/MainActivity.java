@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -87,9 +88,11 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.btn_update:
                 SharedPreferences pref = getSharedPreferences("isFirst", MODE_PRIVATE);
-                new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded)
+                AlertDialog.Builder alert =
+                new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
+                alert
                         .setTitle(Html.fromHtml("<font color='#00574b'><big><b>DB 업데이트를 진행 합니다.</b></big></font>"))
-                        .setIcon(R.drawable.info_icon2)
+                        .setIcon(R.drawable.update_icon)
                         .setMessage("마지막 DB 업데이트 : " + pref.getString("lastUpdate", "알수없음"))
                         .setNegativeButton(Html.fromHtml("<b>확인</b>"), new DialogInterface.OnClickListener() {
                             @Override
@@ -103,8 +106,10 @@ public class MainActivity extends AppCompatActivity {
                             }
                         })
                         .setCancelable(false)
-                        .create()
-                        .show();
+                        .create();
+                AlertDialog dialog = alert.show();
+                TextView messageText = dialog.findViewById(android.R.id.message);
+                messageText.setGravity(Gravity.CENTER);
                 break;
             case R.id.btn_close:
                 alertDialog.dismiss();
