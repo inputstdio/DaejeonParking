@@ -18,7 +18,7 @@
             android:layout_gravity="center"
             android:text="주차장 이름"
             android:id="@+id/parking_name"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textColor="@color/colorPrimaryDark"

@@ -30,6 +30,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
     private final String KEY = "VpuAGnc2dBK0xVvnLMlSYcKGA6DMNXXLySYFNuRvmeQXeZKlj7IfmCOjA2%2Fgez3z6gHlAKonJ0mrSV2A%2Bwnlkg%3D%3D";
@@ -52,6 +53,12 @@ public class MainActivity extends AppCompatActivity {
 
     private SQLiteDAO sql_obj;
     private SQLiteDatabase db;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        editText.setText("");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_update:
                 SharedPreferences pref = getSharedPreferences("isFirst", MODE_PRIVATE);
                 AlertDialog.Builder alert =
-                new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
+                        new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
                 alert
                         .setTitle(Html.fromHtml("<font color='#00574b'><big><b>DB 업데이트를 진행 합니다.</b></big></font>"))
                         .setIcon(R.drawable.update_icon)
@@ -109,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                         .create();
                 AlertDialog dialog = alert.show();
                 TextView messageText = dialog.findViewById(android.R.id.message);
+                assert messageText != null;
                 messageText.setGravity(Gravity.CENTER);
                 break;
             case R.id.btn_close:
@@ -121,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.floatingActionButton_config:
                 LayoutInflater inflater = getLayoutInflater();
-                @SuppressLint("InflateParams") View alertLayout = inflater.inflate(R.layout.alert_config,null);
+                @SuppressLint("InflateParams") View alertLayout = inflater.inflate(R.layout.alert_config, null);
                 AlertDialog.Builder alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
                 alert
                         .setView(alertLayout)
@@ -133,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded)
                         .setTitle(Html.fromHtml("<font color='#00574b'><big><b>정보</b></big></font>"))
                         .setIcon(R.drawable.info_icon2)
-                        .setMessage("· 제작 : 이성우\n· 사용된 API\n\t다음 지도 API\n\t대전시 주차장정보 제공 API")
+                        .setMessage("· 제작 : 이성우\n\tinput@stdio.pe.kr\n\n· 사용된 API\n\t다음 지도 API\n\t대전시 주차장정보 제공 API")
                         .setPositiveButton(Html.fromHtml("<b>확인</b>"), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -151,10 +159,24 @@ public class MainActivity extends AppCompatActivity {
                 StringBuilder sql = new StringBuilder();
                 sql.append("SELECT * FROM parking WHERE NAME LIKE '%");
 
-                String trimStr = editText.getText().toString().trim();
+                String searchStr = editText.getText().toString().toLowerCase();
+                searchStr = searchStr.replaceAll("or", "|");
+                searchStr = searchStr.replaceAll("and", "&");
+                StringTokenizer strToken = new StringTokenizer(searchStr.toLowerCase(), "&|", true);
+                StringBuilder newSearchStr = new StringBuilder();
+                while (strToken.hasMoreTokens()) {
+                    String token = strToken.nextToken();
+                    if (token.equals("&")) {
+                        newSearchStr.append(" AND NAME LIKE '%");
+                    } else if (token.equals("|")) {
+                        newSearchStr.append(" OR NAME LIKE '%");
+                    } else {
+                        newSearchStr.append(token.trim()).append("%'");
+                    }
+                }
 
                 if (!editText.getText().toString().equals("")) {
-                    sql.append(trimStr).append("%'");
+                    sql.append(newSearchStr.toString());
                 } else {
                     sql.append("'");
                 }

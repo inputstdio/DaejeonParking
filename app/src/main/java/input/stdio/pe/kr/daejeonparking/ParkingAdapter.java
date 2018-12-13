@@ -43,8 +43,6 @@ public class ParkingAdapter extends ArrayAdapter<ParkingBean> {
         if (item != null) {
             TextView parkingName = view.findViewById(R.id.parking_name);
             parkingName.setTypeface(Typeface.DEFAULT_BOLD);
-
-            String name = item.getNAME();
             parkingName.setText(newName(item.getNAME()));
 
             TextView parkingDivide = view.findViewById(R.id.parking_divide);
@@ -54,8 +52,12 @@ public class ParkingAdapter extends ArrayAdapter<ParkingBean> {
             String[] type = {"", "공영노상", "공영노외", "민간노외", "부설주차장"};
             parkingDivide.setText(new SpannableStringBuilder(SpannableString("구분 : ", divide[Integer.parseInt(item.getDIVIDE_NUM())])).append(SpannableString("유형 : ", type[Integer.parseInt(item.getTYPE_NUM())])));
 
+            String addr = item.getADDR01();
+            if(addr.length() > 12){
+                addr = addr.substring(0,12) + "...";
+            }
             TextView parkingAddr = view.findViewById(R.id.parking_addr);
-            parkingAddr.setText(SpannableString("주소 : ", item.getADDR01()));
+            parkingAddr.setText(SpannableString("주소 : ", addr));
 
             TextView parkingTotalLot = view.findViewById(R.id.parking_totalLot);
             parkingTotalLot.setText(SpannableString("주차구획 수 : ", item.getTOTAL_PARKING_LOT() + "대"));
