@@ -1,16 +1,17 @@
 package input.stdio.pe.kr.daejeonparking;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -18,6 +19,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -32,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private final String ROWS = "500";
     private final String PAGE = "1";
     private boolean parserSearch[] = new boolean[22];
-    private boolean parserSearch_err = false;
     private Animation floating_open, floating_close;
     private Boolean isFloatingOpen = false;
 
@@ -40,10 +42,15 @@ public class MainActivity extends AppCompatActivity {
     private ParkingBean parkingBean = new ParkingBean();
     private FloatingActionButton floatingActionButton_info, floatingActionButton_config;
     private EditText editText;
-    private RadioButton divide_all, divide_private, divide_public;
-    private CheckBox sat_checkBox, sun_checkBox, week_checkBox;
+    private RadioButton divide_private, divide_public;
+    private CheckBox sat_checkBox, sun_checkBox;
     private Spinner reser_spinner;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    @SuppressLint("SimpleDateFormat")
+    private String timeStamp = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date());
+    private AlertDialog alertDialog;
+
+    private SQLiteDAO sql_obj;
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,19 +63,19 @@ public class MainActivity extends AppCompatActivity {
             Log.d("version", "first");
             SharedPreferences.Editor editor = mPref.edit();
             editor.putBoolean("isFirst", true);
-            editor.putString("lastUpdate",dateFormat.format(new Date(System.currentTimeMillis())));
+            editor.putString("lastUpdate", timeStamp);
             editor.apply();
             makeDB();
         }
         if (bFirst) {
             Log.d("version", "not first");
         }
+        sql_obj = new SQLiteDAO(this);
         floating_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.floating_open);
         floating_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.floating_close);
         floatingActionButton_info = findViewById(R.id.floatingActionButton_info);
         floatingActionButton_config = findViewById(R.id.floatingActionButton_config);
         editText = findViewById(R.id.editText);
-        divide_all = findViewById(R.id.divide_all);
         divide_private = findViewById(R.id.divide_private);
         divide_public = findViewById(R.id.divide_public);
         sat_checkBox = findViewById(R.id.operateDay_sat);
@@ -76,14 +83,14 @@ public class MainActivity extends AppCompatActivity {
         reser_spinner = findViewById(R.id.reservation);
     }
 
-    public void btn_click(View view) {
+    public void alert_btn_click(View view) {
         switch (view.getId()) {
-            case R.id.floatingActionButton_config:
+            case R.id.btn_update:
                 SharedPreferences pref = getSharedPreferences("isFirst", MODE_PRIVATE);
                 new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded)
-                        .setTitle(Html.fromHtml("<font color='#00574b'><big><b>DB Update?</b></big></font>"))
+                        .setTitle(Html.fromHtml("<font color='#00574b'><big><b>DB 업데이트를 진행 합니다.</b></big></font>"))
                         .setIcon(R.drawable.info_icon2)
-                        .setMessage("Last DB Update : " + pref.getString("lastUpdate", "알수없음"))
+                        .setMessage("마지막 DB 업데이트 : " + pref.getString("lastUpdate", "알수없음"))
                         .setNegativeButton(Html.fromHtml("<b>확인</b>"), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -98,6 +105,24 @@ public class MainActivity extends AppCompatActivity {
                         .setCancelable(false)
                         .create()
                         .show();
+                break;
+            case R.id.btn_close:
+                alertDialog.dismiss();
+                break;
+        }
+    }
+
+    public void btn_click(View view) {
+        switch (view.getId()) {
+            case R.id.floatingActionButton_config:
+                LayoutInflater inflater = getLayoutInflater();
+                @SuppressLint("InflateParams") View alertLayout = inflater.inflate(R.layout.alert_config,null);
+                AlertDialog.Builder alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
+                alert
+                        .setView(alertLayout)
+                        .setCancelable(false);
+                alertDialog = alert.create();
+                alertDialog.show();
                 break;
             case R.id.floatingActionButton_info:
                 new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded)
@@ -128,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     sql.append("'");
                 }
-                if (divide_private.isChecked()){
+                if (divide_private.isChecked()) {
                     sql.append(" AND DIVIDE_NUM = '7'");
                 } else if (divide_public.isChecked()) {
                     sql.append(" AND DIVIDE_NUM = '6'");
@@ -175,7 +200,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getParkingAPI() {
-//        Log.d("Log", "getParkingAPI");
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/6300000/openapi/rest2/getParkingInfoList.do");
         urlBuilder.append("?ServiceKey=" + KEY);
         urlBuilder.append("&numOfRows=" + ROWS);
@@ -358,12 +382,14 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     getParkingAPI();
-                    if (parkingBeans.isEmpty()){
-                        Log.d("Log","API ERROR");
+                    if (parkingBeans.isEmpty()) {
+                        Log.d("Log", "API ERROR");
                     }
+                    db = sql_obj.getWritableDatabase();
                     for (ParkingBean data : parkingBeans) {
                         insertDB(data);
                     }
+                    db.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -376,34 +402,29 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     getParkingAPI();
-                    if (parkingBeans.isEmpty()){
-                        Log.d("Log","API ERROR");
+                    if (parkingBeans.isEmpty()) {
+                        Log.d("Log", "API ERROR");
                     }
-                    resetDB();
+                    db = sql_obj.getWritableDatabase();
+                    db.execSQL("DELETE FROM parking");
                     for (ParkingBean data : parkingBeans) {
                         insertDB(data);
                     }
+                    db.close();
                     SharedPreferences mPref = getSharedPreferences("isFirst", MODE_PRIVATE);
                     SharedPreferences.Editor editor = mPref.edit();
                     editor.putBoolean("isFirst", true);
-                    editor.putString("lastUpdate",dateFormat.format(new Date(System.currentTimeMillis())));
+                    editor.putString("lastUpdate", timeStamp);
                     editor.apply();
+                    Toast.makeText(MainActivity.this, "DB 업데이트 완료", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }.start();
     }
-    private void resetDB(){
-        SQLiteDAO sql_obj = new SQLiteDAO(this);
-        SQLiteDatabase db = sql_obj.getWritableDatabase();
-        db.execSQL("DELETE FROM parking");
-        db.close();
-    }
 
     private void insertDB(ParkingBean data) {
-        SQLiteDAO sql_obj = new SQLiteDAO(this);
-        SQLiteDatabase db = sql_obj.getWritableDatabase();
         StringBuilder sql = new StringBuilder();
         sql.append("INSERT INTO parking (PARKING_ID, NAME, LAT, LON, ADDR01, ADDR02, DIVIDE_NUM,");
         sql.append("TYPE_NUM, LAND_LEVEL_NUM, TOTAL_PARKING_LOT, RESTRICT_CODE, OPERATEDAY_CODE,");
@@ -427,32 +448,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private String viewBeanToLog(ParkingBean data) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("이름 : ").append(data.getNAME()).append("\n");
-        sb.append("ID : ").append(data.getPARKING_ID()).append("\n");
-        sb.append("위도 : ").append(data.getLAT()).append("\n");
-        sb.append("경도 : ").append(data.getLON()).append("\n");
-        sb.append("주소(지번) : ").append(data.getADDR01()).append("\n");
-        sb.append("주소(도로명) : ").append(data.getADDR02()).append("\n");
-        sb.append("주차장 구분 : ").append(data.getDIVIDE_NUM()).append("\n");
-        sb.append("주차장 유형 : ").append(data.getTYPE_NUM()).append("\n");
-        sb.append("급지 구분 : ").append(data.getLAND_LEVEL_NUM()).append("\n");
-        sb.append("총 자추 구획 수 : ").append(data.getTOTAL_PARKING_LOT()).append("\n");
-        sb.append("주차부제 시행여부 : ").append(data.getRESTRICT_CODE()).append("\n");
-        sb.append("운영요일 : ").append(data.getOPERATEDAY_CODE()).append("\n");
-        sb.append("기본운영 시작시간 : ").append(data.getWEEKDAY_OPEN_TIME()).append("\n");
-        sb.append("기본운영 종료시간 : ").append(data.getWEEKDAY_CLOSE_TIME()).append("\n");
-        sb.append("토요일운영 시작시간 : ").append(data.getSAT_OPEN_TIME()).append("\n");
-        sb.append("토요일운영 종료시간 : ").append(data.getSAT_CLOSE_TIME()).append("\n");
-        sb.append("공휴일운영 시작시간 : ").append(data.getHOLIDAY_OPEN_TIME()).append("\n");
-        sb.append("공휴일운영 종료시간 : ").append(data.getHOLIDAY_CLOSE_TIME()).append("\n");
-        sb.append("기본무료시간 : ").append(data.getFREECHARGE_BASETIME()).append("\n");
-        sb.append("주차예약서비스 시행여부 : ").append(data.getRESERVATION_CODE()).append("\n");
-        sb.append("특이사항 : ").append(data.getADDITIONAL()).append("\n");
-        return sb.toString();
     }
 }
 

@@ -18,5 +18,7 @@
     <string name="listView_parkingLot">주차구획 수 : </string>
     <string name="btn_close">닫기</string>
     <string name="btn_back">검색 화면으로 돌아가기</string>
+    <string name="btn_update">업데이트</string>
+    <string name="textView_config">주차장 정보 DB</string>
 </resources>
 
