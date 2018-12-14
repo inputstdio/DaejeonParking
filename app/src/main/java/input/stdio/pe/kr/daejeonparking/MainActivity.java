@@ -5,7 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -59,6 +62,11 @@ public class MainActivity extends AppCompatActivity {
 
     private SQLiteDAO sql_obj;
     private SQLiteDatabase db;
+    private SharedPreferences prefTheme;
+    private SharedPreferences.Editor themeEditor;
+    private int theme_black;
+    private int theme_dark_black;
+    private String nowTheme;
 
     @Override
     protected void onStart() {
@@ -69,7 +77,32 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        theme_black = getResources().getColor(R.color.colorPrimary_Black);
+        theme_dark_black = getResources().getColor(R.color.colorPrimaryDark_Black);
+        SharedPreferences prefTheme = getSharedPreferences("theme", 0);
+        nowTheme = prefTheme.getString("theme", "light");
+        if (nowTheme.equals("dark")){
+            setTheme(R.style.AppTheme_black);
+            setContentView(R.layout.activity_main);
+            TextView text_view_divide = findViewById(R.id.text_view_divide);
+            text_view_divide.setTextColor(theme_black);
+            TextView text_view_location = findViewById(R.id.text_view_location);
+            text_view_location.setTextColor(theme_black);
+            TextView text_view_operateDay = findViewById(R.id.text_view_operateDay);
+            text_view_operateDay.setTextColor(theme_black);
+            TextView text_view_reservation = findViewById(R.id.text_view_reservation);
+            text_view_reservation.setTextColor(theme_black);
+            FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
+            Drawable buttonDrawable = floatingActionButton.getBackground();
+            buttonDrawable = DrawableCompat.wrap(buttonDrawable);
+            DrawableCompat.setTint(buttonDrawable, theme_dark_black);
+            floatingActionButton.setBackground(buttonDrawable);
+            Button btn_search = findViewById(R.id.btn_search);
+            btn_search.setBackground(getResources().getDrawable(R.drawable.rounded_button2_dark));
+        } else {
+            setContentView(R.layout.activity_main);
+        }
+
 //      앱 최초 실행시 API 에서 DB 정보 받아오기
         SharedPreferences mPref = getSharedPreferences("isFirst", MODE_PRIVATE);
         Boolean bFirst = mPref.getBoolean("isFirst", false);
@@ -100,13 +133,37 @@ public class MainActivity extends AppCompatActivity {
 
     public void alert_btn_click(View view) {
         switch (view.getId()) {
+            case R.id.btn_theme_light:
+                prefTheme = getSharedPreferences("theme", 0);
+                themeEditor = prefTheme.edit();
+                themeEditor.putString("theme", "light");
+                themeEditor.apply();
+                recreate();
+                break;
+            case R.id.btn_theme_dark:
+                prefTheme = getSharedPreferences("theme", 0);
+                themeEditor = prefTheme.edit();
+                themeEditor.putString("theme", "dark");
+                themeEditor.apply();
+                recreate();
+                break;
             case R.id.btn_update:
-                SharedPreferences pref = getSharedPreferences("isFirst", MODE_PRIVATE);
-                AlertDialog.Builder alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
+                SharedPreferences pref = getSharedPreferences("isFirst", 0);
+                AlertDialog.Builder alert;
+                if (nowTheme.equals("dark")){
+                    alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded_Black);
+                    alert
+                            .setTitle(Html.fromHtml("<font color='" + theme_black + "'><big><b>DB 업데이트를 진행 합니다.</b></big></font>"))
+                            .setMessage(Html.fromHtml("<font color='#FFFFFF'>마지막 DB 업데이트 : " + pref.getString("lastUpdate", "알수없음") + "</font>"))
+                            .setIcon(R.drawable.update_icon);
+                } else {
+                    alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
+                    alert
+                            .setTitle(Html.fromHtml("<font color='#00574b'><big><b>DB 업데이트를 진행 합니다.</b></big></font>"))
+                            .setMessage("마지막 DB 업데이트 : " + pref.getString("lastUpdate", "알수없음"))
+                            .setIcon(R.drawable.update_icon);
+                }
                 alert
-                        .setTitle(Html.fromHtml("<font color='#00574b'><big><b>DB 업데이트를 진행 합니다.</b></big></font>"))
-                        .setIcon(R.drawable.update_icon)
-                        .setMessage("마지막 DB 업데이트 : " + pref.getString("lastUpdate", "알수없음"))
                         .setNegativeButton(Html.fromHtml("<b>확인</b>"), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -136,20 +193,43 @@ public class MainActivity extends AppCompatActivity {
             case R.id.floatingActionButton_config:
                 LayoutInflater inflater = getLayoutInflater();
                 @SuppressLint("InflateParams") View alertLayout = inflater.inflate(R.layout.alert_config, null);
-                AlertDialog.Builder alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
+                AlertDialog.Builder alert;
+                if (nowTheme.equals("dark")) {
+                    alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded_Black);
+                    alert.setTitle(Html.fromHtml("<font color='" + theme_black + "'><big><b>설정</b></big></font>"));
+                } else {
+                    alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
+                    alert.setTitle(Html.fromHtml("<font color='#00574b'><big><b>설정</b></big></font>"));
+                }
                 alert
                         .setIcon(R.drawable.config_icon2)
-                        .setTitle(Html.fromHtml("<font color='#00574b'><big><b>설정</b></big></font>"))
                         .setView(alertLayout)
                         .setCancelable(false);
                 alertDialog = alert.create();
                 alertDialog.show();
+                if (nowTheme.equals("dark")) {
+                    alertDialog.findViewById(R.id.btn_close).setBackground(getResources().getDrawable(R.drawable.rounded_button2_dark));
+                    alertDialog.findViewById(R.id.btn_theme_dark).setBackground(getResources().getDrawable(R.drawable.rounded_button2_dark));
+                    alertDialog.findViewById(R.id.btn_theme_light).setBackground(getResources().getDrawable(R.drawable.rounded_button2_dark));
+                    alertDialog.findViewById(R.id.btn_update).setBackground(getResources().getDrawable(R.drawable.rounded_button2_dark));
+                }
                 break;
             case R.id.floatingActionButton_info:
-                new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded)
-                        .setTitle(Html.fromHtml("<font color='#00574b'><big><b>정보</b></big></font>"))
-                        .setIcon(R.drawable.info_icon2)
-                        .setMessage("· 제작 : 이성우\n\tinput@stdio.pe.kr\n\n· 사용된 API\n\t다음 지도 API\n\t대전시 주차장정보 제공 API\n\n· 사용 글꼴\n\t나눔 바른 고딕 (네이버 제공)")
+                AlertDialog.Builder alert_info;
+                if (nowTheme.equals("dark")){
+                    alert_info = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded_Black);
+                    alert_info
+                            .setMessage(Html.fromHtml("<font color='#FFFFFF'>· 제작 : 이성우<br />\tinput@stdio.pe.kr<br /><br />· 사용된 API<br />\t다음 지도 API<br />\t대전시 주차장정보 제공 API<br /><br />· 사용 글꼴<br />\t나눔 바른 고딕 (네이버 제공)</font>"))
+                            .setTitle(Html.fromHtml("<font color='" + theme_black + "'><big><b>정보</b></big></font>"))
+                            .setIcon(R.drawable.info_icon2);
+                } else {
+                    alert_info = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
+                    alert_info
+                            .setMessage("· 제작 : 이성우\n\tinput@stdio.pe.kr\n\n· 사용된 API\n\t다음 지도 API\n\t대전시 주차장정보 제공 API\n\n· 사용 글꼴\n\t나눔 바른 고딕 (네이버 제공)")
+                            .setTitle(Html.fromHtml("<font color='#00574b'><big><b>정보</b></big></font>"))
+                            .setIcon(R.drawable.info_icon2);
+                }
+                alert_info
                         .setPositiveButton(Html.fromHtml("<b>확인</b>"), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -261,7 +341,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 intent_search.putExtra("query", sql.toString());
-                Log.d("Log", "SQL : " + sql.toString());
                 startActivity(intent_search);
                 break;
         }

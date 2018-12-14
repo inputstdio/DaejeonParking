@@ -2,6 +2,7 @@ package input.stdio.pe.kr.daejeonparking;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
@@ -9,7 +10,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +19,16 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ParkingAdapter extends ArrayAdapter<ParkingBean> {
-    private final int color = Color.parseColor("#00574b");
+    private int color = Color.parseColor("#00574b");
     private ArrayList<ParkingBean> items;
     private LayoutInflater inflater;
-    private SpannableStringBuilder sb;
+    private String nowTheme;
 
-    ParkingAdapter(Context context, int textViewResourceId, ArrayList<ParkingBean> items) {
+    ParkingAdapter(Context context, int textViewResourceId, ArrayList<ParkingBean> items, String nowTheme) {
         super(context, textViewResourceId, items);
         this.items = items;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.nowTheme = nowTheme;
     }
 
     @SuppressLint("InflateParams")
@@ -39,6 +40,10 @@ public class ParkingAdapter extends ArrayAdapter<ParkingBean> {
         }
 
         ParkingBean item = items.get(position);
+        if (nowTheme.equals("dark")) {
+            color = Color.parseColor("#e15b14");
+            view = inflater.inflate(R.layout.listview_parking_dark, null);
+        }
 
         if (item != null) {
             TextView parkingName = view.findViewById(R.id.parking_name);
@@ -69,14 +74,14 @@ public class ParkingAdapter extends ArrayAdapter<ParkingBean> {
 
     private SpannableStringBuilder SpannableString(String category, String value){
         int length = category.length();
-        sb = new SpannableStringBuilder(category);
+        SpannableStringBuilder sb = new SpannableStringBuilder(category);
         sb.append(value).append("\t\t");
         sb.setSpan(new ForegroundColorSpan(color), 0,length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         sb.setSpan(new StyleSpan(Typeface.BOLD), 0,length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return sb;
     }
     private String newName (String name) {
-        String newName = "";
+        String newName;
         String[] names = name.split("\\s");
         StringBuilder sb_name = new StringBuilder();
         int name_length = names.length;

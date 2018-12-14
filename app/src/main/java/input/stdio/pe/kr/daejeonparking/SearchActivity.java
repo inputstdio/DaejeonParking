@@ -2,6 +2,7 @@ package input.stdio.pe.kr.daejeonparking;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -15,14 +16,12 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.MapPOIItem;
@@ -43,10 +42,18 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        SharedPreferences prefTheme = getSharedPreferences("theme", 0);
+        String nowTheme = prefTheme.getString("theme", "light");
+        if (nowTheme.equals("dark")) {
+            setTheme(R.style.AppTheme_black);
+            setContentView(R.layout.activity_search);
+            findViewById(R.id.btn_back).setBackground(getResources().getDrawable(R.drawable.rounded_button2_dark));
+        } else {
+            setContentView(R.layout.activity_search);
+        }
 
         parkingBeans = new ArrayList<>();
-        ParkingAdapter parkingAdapter = new ParkingAdapter(this, R.layout.listview_parking, parkingBeans);
+        ParkingAdapter parkingAdapter = new ParkingAdapter(this, R.layout.listview_parking, parkingBeans, nowTheme);
 
         Intent get_intent = getIntent();
         selectDB(get_intent.getStringExtra("query"));
@@ -57,7 +64,7 @@ public class SearchActivity extends AppCompatActivity {
 
         TextView textView = findViewById(R.id.text_view);
 
-        if (parkingBean == null){
+        if (parkingBean == null) {
 //            Toast.makeText(this,"검색 결과가 없습니다.", Toast.LENGTH_LONG).show();
             textView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
@@ -89,7 +96,7 @@ public class SearchActivity extends AppCompatActivity {
             MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(Double.parseDouble(data.getLAT()), Double.parseDouble(data.getLON()));
             mapView.setMapCenterPoint(mapPoint, true);
             mapViewContainer.addView(mapView);
-//            mapView.setCalloutBalloonAdapter(new CumstomCalloutBalloonAdaper());  // 커스텀 풍선
+//            mapView.setCalloutBalloonAdapter(new CustomCalloutBalloonAdapter());  // 커스텀 풍선
             mapView.setPOIItemEventListener(poiItemEventListener);
 
             // 커스텀 마커
@@ -127,9 +134,7 @@ public class SearchActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             try {
-                                StringBuilder url = new StringBuilder("daummaps://look?p=");
-                                url.append(data.getLAT()).append(",").append(data.getLON());
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("daummaps://look?p=" + data.getLAT() + "," + data.getLON()));
                                 startActivity(intent);
                             } catch (Exception e) {
                                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=net.daum.android.map"));
@@ -163,12 +168,12 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public void onReverseGeoCoderFoundAddress(MapReverseGeoCoder mapReverseGeoCoder, String s) {
             newAddress = s;
-            Log.d("Log", "Address : " + s);
+//            Log.d("Log", "Address : " + s);
         }
 
         @Override
         public void onReverseGeoCoderFailedToFindAddress(MapReverseGeoCoder mapReverseGeoCoder) {
-            Log.d("Log", "no Address");
+//            Log.d("Log", "no Address");
         }
     };
 
@@ -253,7 +258,7 @@ public class SearchActivity extends AppCompatActivity {
                 sb.append(SpannableString("공휴일 운영시간 : ", String.format("%s ~ %s", data.getHOLIDAY_OPEN_TIME(), data.getHOLIDAY_CLOSE_TIME()))).append("\n");
             }
         }
-        String reser_code = "";
+        String reser_code;
         if (data.getRESERVATION_CODE().equals("Y")) {
             reser_code = "시행";
         } else {
@@ -283,8 +288,8 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    public void btn_click(View view){
-        switch (view.getId()){
+    public void btn_click(View view) {
+        switch (view.getId()) {
             case R.id.btn_back:
                 finish();
                 break;

@@ -190,31 +190,4 @@ public class ParkingBean implements Serializable {
     public void setADDITIONAL(String ADDITIONAL) {
         this.ADDITIONAL = ADDITIONAL;
     }
-
-
-    public String getAllString(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("이름 : ").append(NAME).append("\n");
-        sb.append("ID : ").append(PARKING_ID).append("\n");
-        sb.append("위도 : ").append(LAT).append("\n");
-        sb.append("경도 : ").append(LON).append("\n");
-        sb.append("주소(지번) : ").append(ADDR01).append("\n");
-        sb.append("주소(도로명) : ").append(ADDR02).append("\n");
-        sb.append("주차장 구분 : ").append(DIVIDE_NUM).append("\n");
-        sb.append("주차장 유형 : ").append(TYPE_NUM).append("\n");
-        sb.append("급지 구분 : ").append(LAND_LEVEL_NUM).append("\n");
-        sb.append("총 자추 구획 수 : ").append(TOTAL_PARKING_LOT).append("\n");
-        sb.append("주차부제 시행여부 : ").append(RESTRICT_CODE).append("\n");
-        sb.append("운영요일 : ").append(OPERATEDAY_CODE).append("\n");
-        sb.append("기본운영 시작시간 : ").append(WEEKDAY_OPEN_TIME).append("\n");
-        sb.append("기본운영 종료시간 : ").append(WEEKDAY_CLOSE_TIME).append("\n");
-        sb.append("토요일운영 시작시간 : ").append(SAT_OPEN_TIME).append("\n");
-        sb.append("토요일운영 종료시간 : ").append(SAT_CLOSE_TIME).append("\n");
-        sb.append("공휴일운영 시작시간 : ").append(HOLIDAY_OPEN_TIME).append("\n");
-        sb.append("공휴일운영 종료시간 : ").append(HOLIDAY_CLOSE_TIME).append("\n");
-        sb.append("기본무료시간 : ").append(FREECHARGE_BASETIME).append("분\n");
-        sb.append("주차예약서비스 시행여부 : ").append(RESERVATION_CODE).append("\n");
-        sb.append("특이사항 : ").append(ADDITIONAL).append("\n");
-        return sb.toString();
-    }
 }

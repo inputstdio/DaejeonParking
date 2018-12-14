@@ -34,19 +34,4 @@ public class SQLiteDAO extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS parking");
         onCreate(db);
     }
-
-    private void rewriteCopy(SQLiteDatabase db){
-//        StringBuilder sb;
-//        String sql = "SELECT * FROM cpparking";
-//        Cursor cursor = db.rawQuery(sql, null);
-//        while (cursor.moveToNext()){
-//            sb = new StringBuilder();
-//            sb.append("INSERT INTO member (email, name, pass, image) ");
-//            sb.append("VALUES ('").append(cursor.getString(1)).append("', '");
-//            sb.append(cursor.getString(2)).append("', '");
-//            sb.append(cursor.getString(3)).append("', '");
-//            sb.append(cursor.getString(4)).append("')");
-//            db.execSQL(sb.toString());
-//        }
-    }
 }

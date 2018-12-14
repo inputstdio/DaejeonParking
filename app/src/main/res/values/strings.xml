@@ -20,5 +20,7 @@
     <string name="btn_back">검색 화면으로 돌아가기</string>
     <string name="btn_update">주차장 정보 DB 업데이트</string>
     <string name="location">지역</string>
+    <string name="theme_dark">어두운 배경</string>
+    <string name="theme_light">밝은 배경</string>
 </resources>
 

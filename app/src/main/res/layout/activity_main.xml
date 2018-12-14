@@ -53,6 +53,7 @@
                 android:gravity="center_vertical">
 
                 <TextView
+                    android:id="@+id/text_view_divide"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
@@ -113,6 +114,7 @@
                 android:gravity="center_vertical">
 
                 <TextView
+                    android:id="@+id/text_view_operateDay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
@@ -154,6 +156,7 @@
                 android:gravity="center_vertical">
 
                 <TextView
+                    android:id="@+id/text_view_reservation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
@@ -178,6 +181,7 @@
                 android:gravity="center_vertical">
 
                 <TextView
+                    android:id="@+id/text_view_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
@@ -209,7 +213,6 @@
             android:id="@+id/floatingActionButton_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorPrimary"
             android:onClick="btn_click"
             android:src="@drawable/info_icon"
             android:visibility="invisible"
@@ -221,7 +224,6 @@
             android:id="@+id/floatingActionButton_config"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorPrimary"
             android:onClick="btn_click"
             android:src="@drawable/config_icon"
             android:visibility="invisible"
