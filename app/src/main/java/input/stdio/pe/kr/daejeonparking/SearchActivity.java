@@ -273,12 +273,15 @@ public class SearchActivity extends AppCompatActivity {
 
             if (searchDist != 0){
                 gps = new GpsInfo(SearchActivity.this);
-                double latitude = gps.getLatitude();
-                double longitude = gps.getLongitude();
-
-                double dist = distance(latitude, longitude, Double.parseDouble(parkingBean.getLAT()), Double.parseDouble(parkingBean.getLON()), "km");
-                if (dist <= searchDist) {
-                    parkingBeans.add(parkingBean);
+                if (gps.isGetLocation()) {
+                    double latitude = gps.getLatitude();
+                    double longitude = gps.getLongitude();
+                    double dist = distance(latitude, longitude, Double.parseDouble(parkingBean.getLAT()), Double.parseDouble(parkingBean.getLON()), "km");
+                    if (dist <= searchDist) {
+                        parkingBeans.add(parkingBean);
+                    }
+                } else {
+                    gps.showSettingsAlert();
                 }
             }
         }
