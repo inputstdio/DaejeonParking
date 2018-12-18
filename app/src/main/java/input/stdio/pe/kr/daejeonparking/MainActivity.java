@@ -1,12 +1,16 @@
 package input.stdio.pe.kr.daejeonparking;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private int theme_black;
     private int theme_dark_black;
     private String nowTheme;
+    private boolean permission = false;
 
     @Override
     protected void onStart() {
@@ -103,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
             setContentView(R.layout.activity_main);
         }
 
+        permission = check_Permission();
+
 //      앱 최초 실행시 API 에서 DB 정보 받아오기
         SharedPreferences mPref = getSharedPreferences("isFirst", MODE_PRIVATE);
         Boolean bFirst = mPref.getBoolean("isFirst", false);
@@ -129,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         sun_checkBox = findViewById(R.id.operateDay_sun);
         reser_spinner = findViewById(R.id.reservation);
         loca_spinner = findViewById(R.id.location);
+
     }
 
     public void alert_btn_click(View view) {
@@ -246,106 +254,110 @@ public class MainActivity extends AppCompatActivity {
                 floating_anim();
                 break;
             case R.id.btn_search:
-                Intent intent_search = new Intent(MainActivity.this, SearchActivity.class);
-                StringBuilder sql = new StringBuilder();
-                sql.append("SELECT * FROM parking WHERE NAME LIKE '%");
+                if (permission){
+                    Intent intent_search = new Intent(MainActivity.this, SearchActivity.class);
+                    StringBuilder sql = new StringBuilder();
+                    sql.append("SELECT * FROM parking WHERE NAME LIKE '%");
 
-                /* 주차장 이름 에서 or 혹은 and 옵션 검색 및 공백 확인 */
-                String searchStr = editText.getText().toString().toLowerCase();
-                searchStr = searchStr.replaceAll("or", "|");
-                searchStr = searchStr.replaceAll("and", "&");
-                StringTokenizer strToken = new StringTokenizer(searchStr.toLowerCase(), "&|", true);
-                StringBuilder newSearchStr = new StringBuilder();
-                while (strToken.hasMoreTokens()) {
-                    String token = strToken.nextToken();
-                    switch (token) {
-                        case "&":
-                            newSearchStr.append(" AND NAME LIKE '%");
+                    /* 주차장 이름 에서 or 혹은 and 옵션 검색 및 공백 확인 */
+                    String searchStr = editText.getText().toString().toLowerCase();
+                    searchStr = searchStr.replaceAll("or", "|");
+                    searchStr = searchStr.replaceAll("and", "&");
+                    StringTokenizer strToken = new StringTokenizer(searchStr.toLowerCase(), "&|", true);
+                    StringBuilder newSearchStr = new StringBuilder();
+                    while (strToken.hasMoreTokens()) {
+                        String token = strToken.nextToken();
+                        switch (token) {
+                            case "&":
+                                newSearchStr.append(" AND NAME LIKE '%");
+                                break;
+                            case "|":
+                                newSearchStr.append(" OR NAME LIKE '%");
+                                break;
+                            default:
+                                newSearchStr.append(token.trim()).append("%'");
+                                break;
+                        }
+                    }
+                    if (!editText.getText().toString().equals("")) {
+                        sql.append(newSearchStr.toString());
+                    } else {
+                        sql.append("'");
+                    }
+                    /* 구분 확인 */
+                    if (divide_private.isChecked()) {
+                        sql.append(" AND DIVIDE_NUM = '7'");
+                    } else if (divide_public.isChecked()) {
+                        sql.append(" AND DIVIDE_NUM = '6'");
+                    }
+                    /* 운영 요일 확인 */
+                    if (sat_checkBox.isChecked() && sun_checkBox.isChecked()) {
+                        sql.append(" AND OPERATEDAY_CODE = 'Sat,Sun'");
+                    } else if (sat_checkBox.isChecked()) {
+                        sql.append(" AND OPERATEDAY_CODE = 'Sat'");
+                    } else if (sun_checkBox.isChecked()) {
+                        sql.append(" AND OPERATEDAY_CODE = 'Sun'");
+                    } else {
+                        sql.append(" AND OPERATEDAY_CODE = 'NONE'");
+                    }
+                    /* 예약 여부 확인 */
+                    switch (reser_spinner.getSelectedItem().toString()) {
+                        case "가능":
+                            sql.append(" AND RESERVATION_CODE = 'Y'");
                             break;
-                        case "|":
-                            newSearchStr.append(" OR NAME LIKE '%");
-                            break;
-                        default:
-                            newSearchStr.append(token.trim()).append("%'");
+                        case "불가능":
+                            sql.append(" AND RESERVATION_CODE = 'N'");
                             break;
                     }
-                }
-                if (!editText.getText().toString().equals("")) {
-                    sql.append(newSearchStr.toString());
+                    /* 검색 지역 확인 */
+                    switch (loca_spinner.getSelectedItem().toString()) {
+                        case "대덕구":
+                            sql.append(" AND (");
+                            sql.append("ADDR01 LIKE '%").append(daedeokgu[0]).append("%'");
+                            for (int i = 1; i < daedeokgu.length; i++) {
+                                sql.append(" OR ADDR01 LIKE '%").append(daedeokgu[i]).append("%'");
+                            }
+                            sql.append(")");
+                            break;
+                        case "중구":
+                            sql.append(" AND (");
+                            sql.append("ADDR01 LIKE '%").append(junggu[0]).append("%'");
+                            for (int i = 1; i < junggu.length; i++) {
+                                sql.append(" OR ADDR01 LIKE '%").append(junggu[i]).append("%'");
+                            }
+                            sql.append(")");
+                            break;
+                        case "유성구":
+                            sql.append(" AND (");
+                            sql.append("ADDR01 LIKE '%").append(yuseonggu[0]).append("%'");
+                            for (int i = 1; i < yuseonggu.length; i++) {
+                                sql.append(" OR ADDR01 LIKE '%").append(yuseonggu[i]).append("%'");
+                            }
+                            sql.append(")");
+                            break;
+                        case "동구":
+                            sql.append(" AND (");
+                            sql.append("ADDR01 LIKE '%").append(donggu[0]).append("%'");
+                            for (int i = 1; i < donggu.length; i++) {
+                                sql.append(" OR ADDR01 LIKE '%").append(donggu[i]).append("%'");
+                            }
+                            sql.append(")");
+                            break;
+                        case "서구":
+                            sql.append(" AND (");
+                            sql.append("ADDR01 LIKE '%").append(seogu[0]).append("%'");
+                            for (int i = 1; i < seogu.length; i++) {
+                                sql.append(" OR ADDR01 LIKE '%").append(seogu[i]).append("%'");
+                            }
+                            sql.append(")");
+                            break;
+                    }
+                    intent_search.putExtra("query", sql.toString());
+                    startActivity(intent_search);
+                    break;
                 } else {
-                    sql.append("'");
+                    permission = check_Permission();
                 }
-                /* 구분 확인 */
-                if (divide_private.isChecked()) {
-                    sql.append(" AND DIVIDE_NUM = '7'");
-                } else if (divide_public.isChecked()) {
-                    sql.append(" AND DIVIDE_NUM = '6'");
-                }
-                /* 운영 요일 확인 */
-                if (sat_checkBox.isChecked() && sun_checkBox.isChecked()) {
-                    sql.append(" AND OPERATEDAY_CODE = 'Sat,Sun'");
-                } else if (sat_checkBox.isChecked()) {
-                    sql.append(" AND OPERATEDAY_CODE = 'Sat'");
-                } else if (sun_checkBox.isChecked()) {
-                    sql.append(" AND OPERATEDAY_CODE = 'Sun'");
-                } else {
-                    sql.append(" AND OPERATEDAY_CODE = 'NONE'");
-                }
-                /* 예약 여부 확인 */
-                switch (reser_spinner.getSelectedItem().toString()) {
-                    case "가능":
-                        sql.append(" AND RESERVATION_CODE = 'Y'");
-                        break;
-                    case "불가능":
-                        sql.append(" AND RESERVATION_CODE = 'N'");
-                        break;
-                }
-                /* 검색 지역 확인 */
-                switch (loca_spinner.getSelectedItem().toString()) {
-                    case "대덕구":
-                        sql.append(" AND (");
-                        sql.append("ADDR01 LIKE '%").append(daedeokgu[0]).append("%'");
-                        for (int i = 1; i < daedeokgu.length; i++) {
-                            sql.append(" OR ADDR01 LIKE '%").append(daedeokgu[i]).append("%'");
-                        }
-                        sql.append(")");
-                        break;
-                    case "중구":
-                        sql.append(" AND (");
-                        sql.append("ADDR01 LIKE '%").append(junggu[0]).append("%'");
-                        for (int i = 1; i < junggu.length; i++) {
-                            sql.append(" OR ADDR01 LIKE '%").append(junggu[i]).append("%'");
-                        }
-                        sql.append(")");
-                        break;
-                    case "유성구":
-                        sql.append(" AND (");
-                        sql.append("ADDR01 LIKE '%").append(yuseonggu[0]).append("%'");
-                        for (int i = 1; i < yuseonggu.length; i++) {
-                            sql.append(" OR ADDR01 LIKE '%").append(yuseonggu[i]).append("%'");
-                        }
-                        sql.append(")");
-                        break;
-                    case "동구":
-                        sql.append(" AND (");
-                        sql.append("ADDR01 LIKE '%").append(donggu[0]).append("%'");
-                        for (int i = 1; i < donggu.length; i++) {
-                            sql.append(" OR ADDR01 LIKE '%").append(donggu[i]).append("%'");
-                        }
-                        sql.append(")");
-                        break;
-                    case "서구":
-                        sql.append(" AND (");
-                        sql.append("ADDR01 LIKE '%").append(seogu[0]).append("%'");
-                        for (int i = 1; i < seogu.length; i++) {
-                            sql.append(" OR ADDR01 LIKE '%").append(seogu[i]).append("%'");
-                        }
-                        sql.append(")");
-                        break;
-                }
-                intent_search.putExtra("query", sql.toString());
-                startActivity(intent_search);
-                break;
         }
     }
 
@@ -614,6 +626,32 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean check_Permission() {
+        boolean per = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+                new AlertDialog.Builder(this)
+                        .setTitle("권한 요청")
+                        .setMessage("주차장과의 거리 및 빠른 길찾기 기능을 위해 위치 정보 권한이 필요 합니다.")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                MainActivity.this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1000);
+                            }
+                        })
+                        .setCancelable(false)
+                        .create()
+                        .show();
+            } else {
+                per = true;
+            }
+        } else {
+            per = true;
+        }
+        return per;
     }
 }
 

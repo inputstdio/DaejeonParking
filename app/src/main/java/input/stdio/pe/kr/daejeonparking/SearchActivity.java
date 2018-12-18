@@ -16,12 +16,14 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -35,9 +37,9 @@ public class SearchActivity extends AppCompatActivity {
     private AlertDialog alertDialog;
     private ArrayList<ParkingBean> parkingBeans;
     private ParkingBean data;
-    private String newAddress;
     private int color = Color.parseColor("#00574b");
     private String nowTheme;
+    private GpsInfo gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +82,7 @@ public class SearchActivity extends AppCompatActivity {
             data = (ParkingBean) parent.getAdapter().getItem(position);
             LayoutInflater click_inflater = getLayoutInflater();
             View alertLayout = click_inflater.inflate(R.layout.alert_parking_info, null);
+            gps = new GpsInfo(SearchActivity.this);
             AlertDialog.Builder alert;
             if (nowTheme.equals("dark")) {
                 alert = new AlertDialog.Builder(SearchActivity.this, R.style.CustomAlertDialog_Rounded_Black);
@@ -87,7 +90,7 @@ public class SearchActivity extends AppCompatActivity {
                 alert = new AlertDialog.Builder(SearchActivity.this, R.style.CustomAlertDialog_Rounded);
             }
             alert
-                    .setTitle(Html.fromHtml("<font color='" + color +"'><big><b>주차장 상세 정보</b></big></font>"))
+                    .setTitle(Html.fromHtml("<font color='" + color + "'><big><b>주차장 상세 정보</b></big></font>"))
                     .setView(alertLayout)
                     .setCancelable(false);
             alertDialog = alert.create();
@@ -113,7 +116,7 @@ public class SearchActivity extends AppCompatActivity {
             customMarker.setCustomImageAutoscale(true); // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
             customMarker.setCustomImageAnchor(0.5f, 1.0f); // 마커 이미지중 기준이 되는 위치(앵커포인트) 지정 - 마커 이미지 좌측 상단 기준 x(0.0f ~ 1.0f), y(0.0f ~ 1.0f) 값.
 
-            if (nowTheme.equals("dark")){
+            if (nowTheme.equals("dark")) {
                 alertDialog.findViewById(R.id.btn_close).setBackground(getResources().getDrawable(R.drawable.rounded_button2_dark));
                 alertDialog.findViewById(R.id.divideLine).setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark_Black_trans));
                 customMarker.setCustomImageResourceId(R.drawable.custom_marker_orange); // 마커 이미지.
@@ -144,7 +147,14 @@ public class SearchActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             try {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("daummaps://look?p=" + data.getLAT() + "," + data.getLON()));
+                                Intent intent = null;
+                                if (gps.isGetLocation()) {
+                                    double latitude = gps.getLatitude();
+                                    double longitude = gps.getLongitude();
+                                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("daummaps://route?sp="+latitude+","+longitude+"&ep="+data.getLAT()+","+data.getLON()+"&by=CAR"));
+                                } else {
+                                    gps.showSettingsAlert();
+                                }
                                 startActivity(intent);
                             } catch (Exception e) {
                                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=net.daum.android.map"));
@@ -177,7 +187,7 @@ public class SearchActivity extends AppCompatActivity {
     MapReverseGeoCoder.ReverseGeoCodingResultListener reverseGeoCodingResultListener = new MapReverseGeoCoder.ReverseGeoCodingResultListener() {
         @Override
         public void onReverseGeoCoderFoundAddress(MapReverseGeoCoder mapReverseGeoCoder, String s) {
-            newAddress = s;
+            String newAddress = s;
 //            Log.d("Log", "Address : " + s);
         }
 
@@ -186,6 +196,32 @@ public class SearchActivity extends AppCompatActivity {
 //            Log.d("Log", "no Address");
         }
     };
+
+    /* 경도 위도 거리 계산기 */
+    private double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+
+        if (unit == "km") {
+            dist = dist * 1.609344;
+        } else if (unit == "m") {
+            dist = dist * 1609.344;
+        }
+
+        return (dist);
+    }
+
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private static double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
+    }
 
     private void selectDB(String sql) {
         SQLiteDAO sql_obj = new SQLiteDAO(this);
@@ -276,8 +312,26 @@ public class SearchActivity extends AppCompatActivity {
         }
         sb.append(SpannableString("주차 예약 서비스 시행 여부 : ", reser_code)).append("\n");
         if (!data.getADDITIONAL().equals("NONE")) {
-            sb.append(SpannableString("특이사항 : ", data.getADDITIONAL().replaceAll("※", "")));
+            sb.append(SpannableString("특이사항 : ", data.getADDITIONAL().replaceAll("※", ""))).append("\n");
         }
+        // GPS 사용유무 가져오기
+        if (gps.isGetLocation()) {
+
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+
+            double dist = distance(latitude, longitude, Double.parseDouble(data.getLAT()), Double.parseDouble(data.getLON()), "km");
+
+            if (dist > 10000 || dist < 0){
+                sb.append(SpannableString("직선 거리 : ", "위치 정보를 확인 할 수 없습니다."));
+            } else {
+                sb.append(SpannableString("직선 거리 : ", String.format("%.2f km", dist)));
+            }
+        } else {
+            // GPS 를 사용할수 없으므로
+            gps.showSettingsAlert();
+        }
+
         return sb;
     }
 
