@@ -23,7 +23,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapReverseGeoCoder;
@@ -37,16 +36,18 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<ParkingBean> parkingBeans;
     private ParkingBean data;
     private String newAddress;
-    private final int color = Color.parseColor("#00574b");
+    private int color = Color.parseColor("#00574b");
+    private String nowTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences prefTheme = getSharedPreferences("theme", 0);
-        String nowTheme = prefTheme.getString("theme", "light");
+        nowTheme = prefTheme.getString("theme", "light");
         if (nowTheme.equals("dark")) {
             setTheme(R.style.AppTheme_black);
             setContentView(R.layout.activity_search);
+            color = getResources().getColor(R.color.colorPrimary_Black);
             findViewById(R.id.btn_back).setBackground(getResources().getDrawable(R.drawable.rounded_button2_dark));
         } else {
             setContentView(R.layout.activity_search);
@@ -80,23 +81,26 @@ public class SearchActivity extends AppCompatActivity {
             data = (ParkingBean) parent.getAdapter().getItem(position);
             LayoutInflater click_inflater = getLayoutInflater();
             View alertLayout = click_inflater.inflate(R.layout.alert_parking_info, null);
-            AlertDialog.Builder alert = new AlertDialog.Builder(SearchActivity.this, R.style.CustomAlertDialog_Rounded);
+            AlertDialog.Builder alert;
+            if (nowTheme.equals("dark")) {
+                alert = new AlertDialog.Builder(SearchActivity.this, R.style.CustomAlertDialog_Rounded_Black);
+            } else {
+                alert = new AlertDialog.Builder(SearchActivity.this, R.style.CustomAlertDialog_Rounded);
+            }
             alert
-                    .setTitle(Html.fromHtml("<font color='#00574b'><big><b>주차장 상세 정보</b></big></font>"))
+                    .setTitle(Html.fromHtml("<font color='" + color +"'><big><b>주차장 상세 정보</b></big></font>"))
                     .setView(alertLayout)
                     .setCancelable(false);
             alertDialog = alert.create();
             alertDialog.show();
 
             TextView alert_textView = alertLayout.findViewById(R.id.text_view);
-//            alert_textView.setText(data.getAllString());
             alert_textView.setText(show_info());
 
             ViewGroup mapViewContainer = alertLayout.findViewById(R.id.map_view);
             MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(Double.parseDouble(data.getLAT()), Double.parseDouble(data.getLON()));
             mapView.setMapCenterPoint(mapPoint, true);
             mapViewContainer.addView(mapView);
-//            mapView.setCalloutBalloonAdapter(new CustomCalloutBalloonAdapter());  // 커스텀 풍선
             mapView.setPOIItemEventListener(poiItemEventListener);
 
             // 커스텀 마커
@@ -109,6 +113,13 @@ public class SearchActivity extends AppCompatActivity {
             customMarker.setCustomSelectedImageResourceId(R.drawable.custom_marker_selected); // 선택 마커 이미지.
             customMarker.setCustomImageAutoscale(true); // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
             customMarker.setCustomImageAnchor(0.5f, 1.0f); // 마커 이미지중 기준이 되는 위치(앵커포인트) 지정 - 마커 이미지 좌측 상단 기준 x(0.0f ~ 1.0f), y(0.0f ~ 1.0f) 값.
+
+            if (nowTheme.equals("dark")){
+                alertDialog.findViewById(R.id.btn_close).setBackground(getResources().getDrawable(R.drawable.rounded_button2_dark));
+                alertDialog.findViewById(R.id.divideLine).setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark_Black_trans));
+                customMarker.setCustomImageResourceId(R.drawable.custom_marker_orange); // 마커 이미지.
+                customMarker.setCustomSelectedImageResourceId(R.drawable.custom_marker_selected_orange); // 선택 마커 이미지.
+            }
 
             mapView.addPOIItem(customMarker);
 
@@ -293,26 +304,6 @@ public class SearchActivity extends AppCompatActivity {
             case R.id.btn_back:
                 finish();
                 break;
-        }
-    }
-
-    class CumstomCalloutBalloonAdaper implements CalloutBalloonAdapter {
-        private final View mCalloutBalloon;
-
-        public CumstomCalloutBalloonAdaper() {
-            mCalloutBalloon = getLayoutInflater().inflate(R.layout.custom_callout_balloon, null);
-        }
-
-        @Override
-        public View getCalloutBalloon(MapPOIItem mapPOIItem) {
-            ((TextView) mCalloutBalloon.findViewById(R.id.title)).setText(mapPOIItem.getItemName());
-            ((TextView) mCalloutBalloon.findViewById(R.id.desc)).setText(newAddress);
-            return mCalloutBalloon;
-        }
-
-        @Override
-        public View getPressedCalloutBalloon(MapPOIItem mapPOIItem) {
-            return null;
         }
     }
 }

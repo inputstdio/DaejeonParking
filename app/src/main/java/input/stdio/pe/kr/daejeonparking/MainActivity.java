@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                     alert
                             .setTitle(Html.fromHtml("<font color='" + theme_black + "'><big><b>DB 업데이트를 진행 합니다.</b></big></font>"))
                             .setMessage(Html.fromHtml("<font color='#FFFFFF'>마지막 DB 업데이트 : " + pref.getString("lastUpdate", "알수없음") + "</font>"))
-                            .setIcon(R.drawable.update_icon);
+                            .setIcon(R.drawable.update_icon_orange);
                 } else {
                     alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
                     alert
@@ -196,13 +196,16 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder alert;
                 if (nowTheme.equals("dark")) {
                     alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded_Black);
-                    alert.setTitle(Html.fromHtml("<font color='" + theme_black + "'><big><b>설정</b></big></font>"));
+                    alert
+                            .setIcon(R.drawable.config_icon_orange)
+                            .setTitle(Html.fromHtml("<font color='" + theme_black + "'><big><b>설정</b></big></font>"));
                 } else {
                     alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
-                    alert.setTitle(Html.fromHtml("<font color='#00574b'><big><b>설정</b></big></font>"));
+                    alert
+                            .setTitle(Html.fromHtml("<font color='#00574b'><big><b>설정</b></big></font>"))
+                            .setIcon(R.drawable.config_icon2);
                 }
                 alert
-                        .setIcon(R.drawable.config_icon2)
                         .setView(alertLayout)
                         .setCancelable(false);
                 alertDialog = alert.create();
@@ -221,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                     alert_info
                             .setMessage(Html.fromHtml("<font color='#FFFFFF'>· 제작 : 이성우<br />\tinput@stdio.pe.kr<br /><br />· 사용된 API<br />\t다음 지도 API<br />\t대전시 주차장정보 제공 API<br /><br />· 사용 글꼴<br />\t나눔 바른 고딕 (네이버 제공)</font>"))
                             .setTitle(Html.fromHtml("<font color='" + theme_black + "'><big><b>정보</b></big></font>"))
-                            .setIcon(R.drawable.info_icon2);
+                            .setIcon(R.drawable.info_icon2_orange);
                 } else {
                     alert_info = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded);
                     alert_info
