@@ -66,7 +66,6 @@ public class SearchActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.text_view);
 
         if (parkingBean == null) {
-//            Toast.makeText(this,"검색 결과가 없습니다.", Toast.LENGTH_LONG).show();
             textView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
             textView.setText("검색 결과가 없습니다.");

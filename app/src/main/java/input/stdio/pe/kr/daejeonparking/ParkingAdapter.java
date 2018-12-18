@@ -2,7 +2,6 @@ package input.stdio.pe.kr.daejeonparking;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
