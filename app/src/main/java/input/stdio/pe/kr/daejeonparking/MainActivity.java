@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText editText;
     private RadioButton divide_private, divide_public;
     private CheckBox sat_checkBox, sun_checkBox;
-    private Spinner reser_spinner, loca_spinner;
+    private Spinner reser_spinner, loca_spinner, dist_spinner;
     @SuppressLint("SimpleDateFormat")
     private String timeStamp = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date());
     private AlertDialog alertDialog;
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         theme_dark_black = getResources().getColor(R.color.colorPrimaryDark_Black);
         SharedPreferences prefTheme = getSharedPreferences("theme", 0);
         nowTheme = prefTheme.getString("theme", "light");
-        if (nowTheme.equals("dark")){
+        if (nowTheme.equals("dark")) {
             setTheme(R.style.AppTheme_black);
             setContentView(R.layout.activity_main);
             TextView text_view_divide = findViewById(R.id.text_view_divide);
@@ -97,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
             text_view_operateDay.setTextColor(theme_black);
             TextView text_view_reservation = findViewById(R.id.text_view_reservation);
             text_view_reservation.setTextColor(theme_black);
+            TextView text_view_distance = findViewById(R.id.text_view_distance);
+            text_view_distance.setTextColor(theme_black);
             FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
             Drawable buttonDrawable = floatingActionButton.getBackground();
             buttonDrawable = DrawableCompat.wrap(buttonDrawable);
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         sun_checkBox = findViewById(R.id.operateDay_sun);
         reser_spinner = findViewById(R.id.reservation);
         loca_spinner = findViewById(R.id.location);
-
+        dist_spinner = findViewById(R.id.distance);
     }
 
     public void alert_btn_click(View view) {
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_update:
                 SharedPreferences pref = getSharedPreferences("isFirst", 0);
                 AlertDialog.Builder alert;
-                if (nowTheme.equals("dark")){
+                if (nowTheme.equals("dark")) {
                     alert = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded_Black);
                     alert
                             .setTitle(Html.fromHtml("<font color='" + theme_black + "'><big><b>DB 업데이트를 진행 합니다.</b></big></font>"))
@@ -227,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.floatingActionButton_info:
                 AlertDialog.Builder alert_info;
-                if (nowTheme.equals("dark")){
+                if (nowTheme.equals("dark")) {
                     alert_info = new AlertDialog.Builder(this, R.style.CustomAlertDialog_Rounded_Black);
                     alert_info
                             .setMessage(Html.fromHtml("<font color='#FFFFFF'>· 제작 : 이성우<br />\tinput@stdio.pe.kr<br /><br />· 사용된 API<br />\t다음 지도 API<br />\t대전시 주차장정보 제공 API<br /><br />· 사용 글꼴<br />\t나눔 바른 고딕 (네이버 제공)</font>"))
@@ -254,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
                 floating_anim();
                 break;
             case R.id.btn_search:
-                if (permission){
+                if (permission) {
                     Intent intent_search = new Intent(MainActivity.this, SearchActivity.class);
                     StringBuilder sql = new StringBuilder();
                     sql.append("SELECT * FROM parking WHERE NAME LIKE '%");
@@ -352,6 +354,7 @@ public class MainActivity extends AppCompatActivity {
                             sql.append(")");
                             break;
                     }
+                    intent_search.putExtra("distance", dist_spinner.getSelectedItem().toString());
                     intent_search.putExtra("query", sql.toString());
                     startActivity(intent_search);
                     break;
@@ -632,7 +635,7 @@ public class MainActivity extends AppCompatActivity {
         boolean per = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 new AlertDialog.Builder(this)
                         .setTitle("권한 요청")
                         .setMessage("주차장과의 거리 및 빠른 길찾기 기능을 위해 위치 정보 권한이 필요 합니다.")

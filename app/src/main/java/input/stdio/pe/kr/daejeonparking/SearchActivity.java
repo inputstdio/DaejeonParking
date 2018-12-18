@@ -16,14 +16,12 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -59,7 +57,7 @@ public class SearchActivity extends AppCompatActivity {
         ParkingAdapter parkingAdapter = new ParkingAdapter(this, R.layout.listview_parking, parkingBeans, nowTheme);
 
         Intent get_intent = getIntent();
-        selectDB(get_intent.getStringExtra("query"));
+        selectDB(get_intent.getStringExtra("query"), get_intent.getStringExtra("distance"));
 
         ListView listView = findViewById(R.id.listView);
         listView.setAdapter(parkingAdapter);
@@ -67,7 +65,7 @@ public class SearchActivity extends AppCompatActivity {
 
         TextView textView = findViewById(R.id.text_view);
 
-        if (parkingBean == null) {
+        if (parkingBeans.isEmpty()) {
             textView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
             textView.setText("검색 결과가 없습니다.");
@@ -142,7 +140,8 @@ public class SearchActivity extends AppCompatActivity {
             // 다음 지도(카카오맵) 로 연결
             new AlertDialog.Builder(SearchActivity.this)
                     .setIcon(R.drawable.kakaomap_icon)
-                    .setTitle("카카오 맵으로 이동 합니다.")
+                    .setTitle("빠른길찾기")
+                    .setMessage("카카오 맵으로 이동 합니다.")
                     .setNegativeButton("예", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -151,7 +150,7 @@ public class SearchActivity extends AppCompatActivity {
                                 if (gps.isGetLocation()) {
                                     double latitude = gps.getLatitude();
                                     double longitude = gps.getLongitude();
-                                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("daummaps://route?sp="+latitude+","+longitude+"&ep="+data.getLAT()+","+data.getLON()+"&by=CAR"));
+                                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("daummaps://route?sp=" + latitude + "," + longitude + "&ep=" + data.getLAT() + "," + data.getLON() + "&by=CAR"));
                                 } else {
                                     gps.showSettingsAlert();
                                 }
@@ -223,7 +222,7 @@ public class SearchActivity extends AppCompatActivity {
         return (rad * 180 / Math.PI);
     }
 
-    private void selectDB(String sql) {
+    private void selectDB(String sql, String distance) {
         SQLiteDAO sql_obj = new SQLiteDAO(this);
         SQLiteDatabase db = sql_obj.getReadableDatabase();
 
@@ -252,7 +251,36 @@ public class SearchActivity extends AppCompatActivity {
             parkingBean.setFREECHARGE_BASETIME(cursor.getString(19));
             parkingBean.setRESERVATION_CODE(cursor.getString(20));
             parkingBean.setADDITIONAL(cursor.getString(21));
-            parkingBeans.add(parkingBean);
+
+            double searchDist = 0;
+            switch (distance) {
+                case "100m":
+                    searchDist = 0.1;
+                    break;
+                case "500m":
+                    searchDist = 0.5;
+                    break;
+                case "1km":
+                    searchDist = 1;
+                    break;
+                case "5km":
+                    searchDist = 5;
+                    break;
+                default:
+                    parkingBeans.add(parkingBean);
+                    break;
+            }
+
+            if (searchDist != 0){
+                gps = new GpsInfo(SearchActivity.this);
+                double latitude = gps.getLatitude();
+                double longitude = gps.getLongitude();
+
+                double dist = distance(latitude, longitude, Double.parseDouble(parkingBean.getLAT()), Double.parseDouble(parkingBean.getLON()), "km");
+                if (dist <= searchDist) {
+                    parkingBeans.add(parkingBean);
+                }
+            }
         }
         cursor.close();
         db.close();
@@ -322,7 +350,7 @@ public class SearchActivity extends AppCompatActivity {
 
             double dist = distance(latitude, longitude, Double.parseDouble(data.getLAT()), Double.parseDouble(data.getLON()), "km");
 
-            if (dist > 10000 || dist < 0){
+            if (dist > 10000 || dist < 0) {
                 sb.append(SpannableString("직선 거리 : ", "위치 정보를 확인 할 수 없습니다."));
             } else {
                 sb.append(SpannableString("직선 거리 : ", String.format("%.2f km", dist)));

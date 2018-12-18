@@ -22,5 +22,6 @@
     <string name="location">지역</string>
     <string name="theme_dark">어두운 배경</string>
     <string name="theme_light">밝은 배경</string>
+    <string name="distance">검색 거리</string>
 </resources>
 

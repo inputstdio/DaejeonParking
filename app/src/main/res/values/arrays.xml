@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="reservation">
-        <item>무관</item>
+        <item>상관 없음</item>
         <item>가능</item>
         <item>불가능</item>
     </string-array>
@@ -12,5 +12,12 @@
         <item>동구</item>
         <item>중구</item>
         <item>서구</item>
+    </string-array>
+    <string-array name="distance">
+        <item>상관 없음</item>
+        <item>100m</item>
+        <item>500m</item>
+        <item>1km</item>
+        <item>5km</item>
     </string-array>
 </resources>
