@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private final String[] seogu = {"복수동", "도마동", "도마1동", "도마2동", "정림동", "변동", "용문동", "탄방동", "괴정동", "가장동", "내동", "갈마동", "갈마1동", "갈마2동", "월평동", "월평1동", "월평2동", "월평3동", "가수원동", "관저동", "관저1동", "관저2동", "기성동", "둔산동", "둔산1동", "둔산2동", "둔산3동", "만년동"};
     private final String[] yuseonggu = {"진잠동", "원신흥동", "온천동", "온천1동", "온천2동", "노은동", "노은1동", "노은2동", "노은3동", "신성동", "전민동", "관평동", "구즉동"};
     private final String[] junggu = {"은행동", "선화동", "목동", "중촌동", "대흥동", "문창동", "석교동", "대사동", "부사동", "용두동", "오류동", "태평동", "태평1동", "태평2동", "유천동", "유천1동", "유천2동", "문화동", "문화1동", "문화2동", "산성동"};
+    private BackPressCloseHandler backPressCloseHandler;
 
     private boolean parserSearch[] = new boolean[22];
     private Animation floating_open, floating_close;
@@ -80,8 +81,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        backPressCloseHandler.onBackPressed();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        backPressCloseHandler = new BackPressCloseHandler(this);
         theme_black = getResources().getColor(R.color.colorPrimary_Black);
         theme_dark_black = getResources().getColor(R.color.colorPrimaryDark_Black);
         SharedPreferences prefTheme = getSharedPreferences("theme", 0);

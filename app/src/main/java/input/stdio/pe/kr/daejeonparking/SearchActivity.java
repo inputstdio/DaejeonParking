@@ -37,7 +37,6 @@ public class SearchActivity extends AppCompatActivity {
     private ParkingBean data;
     private int color = Color.parseColor("#00574b");
     private String nowTheme;
-    private GpsInfo gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +79,6 @@ public class SearchActivity extends AppCompatActivity {
             data = (ParkingBean) parent.getAdapter().getItem(position);
             LayoutInflater click_inflater = getLayoutInflater();
             View alertLayout = click_inflater.inflate(R.layout.alert_parking_info, null);
-            gps = new GpsInfo(SearchActivity.this);
             AlertDialog.Builder alert;
             if (nowTheme.equals("dark")) {
                 alert = new AlertDialog.Builder(SearchActivity.this, R.style.CustomAlertDialog_Rounded_Black);
@@ -147,6 +145,7 @@ public class SearchActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             try {
                                 Intent intent = null;
+                                GpsInfo gps = new GpsInfo(SearchActivity.this);
                                 if (gps.isGetLocation()) {
                                     double latitude = gps.getLatitude();
                                     double longitude = gps.getLongitude();
@@ -155,6 +154,7 @@ public class SearchActivity extends AppCompatActivity {
                                     gps.showSettingsAlert();
                                 }
                                 startActivity(intent);
+                                gps.stopUsingGPS();
                             } catch (Exception e) {
                                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=net.daum.android.map"));
                                 startActivity(intent);
@@ -227,6 +227,7 @@ public class SearchActivity extends AppCompatActivity {
         SQLiteDatabase db = sql_obj.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(sql, null);
+        GpsInfo gps = new GpsInfo(SearchActivity.this);
 
         while (cursor.moveToNext()) {
             parkingBean = new ParkingBean();
@@ -272,7 +273,6 @@ public class SearchActivity extends AppCompatActivity {
             }
 
             if (searchDist != 0){
-                gps = new GpsInfo(SearchActivity.this);
                 if (gps.isGetLocation()) {
                     double latitude = gps.getLatitude();
                     double longitude = gps.getLongitude();
@@ -287,6 +287,7 @@ public class SearchActivity extends AppCompatActivity {
         }
         cursor.close();
         db.close();
+        gps.stopUsingGPS();
     }
 
     private SpannableStringBuilder show_info() {
@@ -346,6 +347,7 @@ public class SearchActivity extends AppCompatActivity {
             sb.append(SpannableString("특이사항 : ", data.getADDITIONAL().replaceAll("※", ""))).append("\n");
         }
         // GPS 사용유무 가져오기
+        GpsInfo gps = new GpsInfo(SearchActivity.this);
         if (gps.isGetLocation()) {
 
             double latitude = gps.getLatitude();
@@ -363,6 +365,7 @@ public class SearchActivity extends AppCompatActivity {
             gps.showSettingsAlert();
         }
 
+        gps.stopUsingGPS();
         return sb;
     }
 
