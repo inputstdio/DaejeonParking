@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DaejeonParking</string>
+    <string name="app_name">대전 주차장</string>
     <string name="daum_map">daum_map</string>
     <string name="search_hint">주차장 이름을 입력 하세요</string>
     <string name="search_btn">검색</string>

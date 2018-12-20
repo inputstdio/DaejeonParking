@@ -364,7 +364,6 @@ public class SearchActivity extends AppCompatActivity {
             // GPS 를 사용할수 없으므로
             gps.showSettingsAlert();
         }
-
         gps.stopUsingGPS();
         return sb;
     }
